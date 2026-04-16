@@ -1,0 +1,1078 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.proto-shell{display:flex;gap:28px;padding:1.5rem 0;align-items:flex-start;justify-content:center;flex-wrap:wrap}
+.phone-frame{width:340px;min-width:340px;background:#1a1a1a;border-radius:44px;padding:12px;box-shadow:0 0 0 1px #333}
+.phone-screen{background:#f5f5f0;border-radius:34px;overflow:hidden;height:700px;position:relative}
+.status-bar{background:white;padding:10px 20px 6px;display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:500;color:#1a1a1a}
+.screen{display:none;flex-direction:column;height:100%}
+.screen.active{display:flex}
+.nav-bar{background:white;padding:10px 16px 10px;border-bottom:0.5px solid #e5e5e5;display:flex;align-items:center;gap:10px}
+.nav-back{font-size:12px;color:#1D9E75;cursor:pointer;padding:4px 10px;border:0.5px solid #1D9E75;border-radius:20px;background:transparent}
+.nav-title{font-size:15px;font-weight:500;color:#1a1a1a;flex:1;text-align:center}
+.scroll-content{flex:1;overflow-y:auto;padding:16px;scrollbar-width:none}
+.scroll-content::-webkit-scrollbar{display:none}
+.bottom-nav{background:white;border-top:0.5px solid #e5e5e5;padding:8px 0 10px;display:flex;justify-content:space-around}
+.bnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:#888;cursor:pointer;padding:2px 10px;border-radius:8px}
+.bnav-item.active{color:#1D9E75}
+.logo{font-size:16px;font-weight:500}
+.logo .mon{color:#1a3a2a}
+.logo .billet{color:#F5A623}
+.logo .bf{color:#1a3a2a}
+.app-header{background:white;padding:10px 16px;border-bottom:0.5px solid #e5e5e5;display:flex;justify-content:space-between;align-items:center}
+.btn-primary{background:#F5A623;color:#1a1a1a;border:none;border-radius:14px;padding:14px;font-size:14px;font-weight:500;width:100%;cursor:pointer;margin-top:8px}
+.btn-green{background:#1D9E75;color:white;border:none;border-radius:14px;padding:14px;font-size:14px;font-weight:500;width:100%;cursor:pointer;margin-top:8px}
+.btn-outline-g{background:white;color:#1D9E75;border:0.5px solid #1D9E75;border-radius:14px;padding:11px;font-size:13px;cursor:pointer;margin-top:6px;width:100%}
+
+/* ONBOARDING */
+.onb-hero{background:#1a3a2a;padding:28px 20px 24px;text-align:center}
+.onb-logo{font-size:26px;font-weight:500;color:white;margin-bottom:4px}
+.onb-logo span{color:#F5A623}
+.onb-tagline{font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:20px}
+.onb-market-row{display:flex;gap:10px;justify-content:center}
+.onb-stat{background:rgba(255,255,255,0.1);border-radius:12px;padding:10px 14px;text-align:center;min-width:70px}
+.onb-stat .n{font-size:18px;font-weight:500;color:#F5A623}
+.onb-stat .l{font-size:10px;color:rgba(255,255,255,0.55);margin-top:2px}
+.market-card{background:white;border:0.5px solid #e5e5e5;border-radius:14px;padding:13px;margin-bottom:10px}
+.market-card .title{font-size:13px;font-weight:500;color:#1a1a1a;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.market-bar-wrap{background:#f0f0ec;border-radius:20px;height:7px;margin-bottom:4px;overflow:hidden}
+.market-bar{height:100%;border-radius:20px;background:#1D9E75}
+.market-bar.amber{background:#F5A623}
+.market-bar.dark{background:#1a3a2a}
+.market-labels{display:flex;justify-content:space-between;font-size:10px;color:#888}
+.pain-point{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:0.5px solid #f0f0f0}
+.pain-point:last-child{border-bottom:none}
+.pain-icon{font-size:18px;flex-shrink:0}
+.pain-text{font-size:12px;color:#555}
+.pain-title{font-size:12px;font-weight:500;color:#1a1a1a;margin-bottom:2px}
+
+/* TABS */
+.tabs{display:flex;gap:6px;margin-bottom:16px}
+.tab{flex:1;padding:8px 4px;font-size:12px;text-align:center;border-radius:10px;cursor:pointer;border:0.5px solid #ddd;background:white;color:#666}
+.tab.active{background:#1D9E75;color:white;border-color:#1D9E75}
+.form-group{margin-bottom:12px}
+.form-label{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}
+.form-input{background:white;border:0.5px solid #e0e0e0;border-radius:12px;padding:12px 14px;font-size:14px;color:#1a1a1a;display:flex;align-items:center;gap:8px;cursor:pointer;width:100%}
+.placeholder{color:#aaa;font-size:13px}
+.form-row{display:flex;gap:8px}
+.form-row .form-group{flex:1}
+.swap-btn{width:36px;height:36px;background:white;border:0.5px solid #e0e0e0;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;align-self:center;margin-top:14px;font-size:16px;color:#1D9E75}
+.hero-card{background:#1a3a2a;border-radius:20px;padding:20px;margin-bottom:16px}
+.hero-location{font-size:10px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px}
+.hero-title{font-size:20px;font-weight:500;color:white;line-height:1.2;margin-bottom:4px}
+.hero-accent{color:#F5A623}
+.hero-subtitle{font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:14px}
+.hero-stats{display:flex;gap:20px}
+.hero-stat .num{font-size:18px;font-weight:500;color:white}
+.hero-stat .lbl{font-size:10px;color:rgba(255,255,255,0.5)}
+
+/* RESULTS */
+.filter-row{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.filter-pill{padding:5px 12px;border-radius:20px;font-size:11px;border:0.5px solid #ddd;background:white;color:#555;white-space:nowrap;cursor:pointer}
+.filter-pill.active{background:#1a3a2a;color:white;border-color:#1a3a2a}
+.result-card{background:white;border:0.5px solid #e5e5e5;border-radius:16px;padding:14px;margin-bottom:10px;cursor:pointer}
+.result-card.featured{border:1.5px solid #1D9E75}
+.result-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.company-name{font-size:14px;font-weight:500;color:#1a1a1a}
+.company-class{font-size:10px;padding:2px 8px;border-radius:20px;background:#E1F5EE;color:#0F6E56}
+.company-class.vip{background:#FAEEDA;color:#854F0B}
+.price{font-size:20px;font-weight:500;color:#1D9E75}
+.price-unit{font-size:11px;color:#888}
+.route-times{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.time{font-size:18px;font-weight:500;color:#1a1a1a}
+.time-city{font-size:10px;color:#888}
+.duration{flex:1;text-align:center;font-size:10px;color:#888}
+.result-tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:10px;padding:3px 8px;border-radius:20px;background:#f0f0f0;color:#555}
+.tag.green{background:#E1F5EE;color:#0F6E56}
+
+/* SEATS */
+.trip-bar{background:white;border-radius:12px;padding:10px 14px;margin-bottom:12px;border:0.5px solid #e5e5e5;display:flex;justify-content:space-between;align-items:center}
+.legend{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:10px;color:#666}
+.legend-dot{width:14px;height:14px;border-radius:4px;border:0.5px solid #ddd}
+.seat-grid{background:white;border-radius:16px;padding:14px;margin-bottom:12px}
+.bus-front{text-align:center;font-size:11px;color:#888;margin-bottom:12px;padding-bottom:10px;border-bottom:0.5px dashed #ddd;display:flex;align-items:center;justify-content:center;gap:6px}
+.seats-container{display:grid;grid-template-columns:1fr 20px 1fr;gap:6px;align-items:start}
+.seat-col{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.seat{width:100%;aspect-ratio:1;border-radius:8px;border:0.5px solid #ddd;background:white;display:flex;align-items:center;justify-content:center;font-size:11px;color:#555;cursor:pointer}
+.seat.occupied{background:#f0f0f0;color:#ccc;cursor:default;border-color:#e0e0e0}
+.seat.selected{background:#1D9E75;color:white;border-color:#1D9E75}
+.seat.vip{border-color:#F5A623;color:#854F0B}
+
+/* BAGGAGE */
+.bag-card{background:white;border:0.5px solid #e5e5e5;border-radius:14px;padding:14px;margin-bottom:10px}
+.bag-header{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.bag-icon{font-size:20px;flex-shrink:0}
+.bag-name{font-size:13px;font-weight:500}
+.bag-sub{font-size:11px;color:#888}
+.bag-price{font-size:14px;font-weight:500;color:#1D9E75;margin-left:auto;text-align:right}
+.counter{display:flex;align-items:center;gap:12px;margin-top:8px}
+.counter-btn{width:28px;height:28px;border-radius:50%;border:0.5px solid #ddd;background:white;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#1D9E75}
+.counter-val{font-size:16px;font-weight:500;min-width:20px;text-align:center}
+.order-summary{background:#f8f8f5;border-radius:12px;padding:12px;margin-bottom:14px}
+.order-title{font-size:11px;font-weight:500;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px}
+.order-row{display:flex;justify-content:space-between;font-size:12px;color:#555;margin-bottom:4px}
+.order-total{display:flex;justify-content:space-between;font-size:15px;font-weight:500;color:#1a1a1a;margin-top:8px;padding-top:8px;border-top:0.5px solid #e0e0e0}
+
+/* PAYMENT */
+.pay-method{background:white;border:0.5px solid #e5e5e5;border-radius:14px;padding:12px 14px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:12px}
+.pay-method.selected{border:1.5px solid #1D9E75}
+.pay-logo{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:white;flex-shrink:0}
+.pay-logo.om{background:#FF6600}
+.pay-logo.mm{background:#009900}
+.pay-logo.wv{background:#0066FF}
+.pay-logo.cb{background:#993300}
+.pay-info{flex:1}
+.pay-name{font-size:13px;font-weight:500}
+.pay-users{font-size:10px;color:#888}
+.radio-outer{width:18px;height:18px;border-radius:50%;border:1.5px solid #ddd;display:flex;align-items:center;justify-content:center}
+.pay-method.selected .radio-outer{border-color:#1D9E75}
+.radio-inner{width:10px;height:10px;border-radius:50%;background:#1D9E75;display:none}
+.pay-method.selected .radio-inner{display:block}
+
+/* OTP SCREEN */
+.otp-hero{text-align:center;padding:20px 16px 16px}
+.otp-op-badge{display:inline-flex;align-items:center;gap:8px;background:#fff3e8;border-radius:12px;padding:8px 16px;margin-bottom:14px}
+.otp-op-dot{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:white}
+.otp-title{font-size:16px;font-weight:500;color:#1a1a1a;margin-bottom:6px}
+.otp-sub{font-size:12px;color:#888;margin-bottom:20px}
+.otp-phone-display{background:#f0f0ec;border-radius:10px;padding:10px 14px;text-align:center;font-size:13px;color:#555;margin-bottom:20px}
+.otp-boxes{display:flex;gap:10px;justify-content:center;margin-bottom:16px}
+.otp-box{width:44px;height:52px;border:1.5px solid #ddd;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:500;color:#1a1a1a;background:white;transition:border-color 0.15s}
+.otp-box.filled{border-color:#1D9E75;background:#f0faf6}
+.otp-box.active{border-color:#F5A623}
+.otp-resend{font-size:12px;color:#1D9E75;text-align:center;cursor:pointer;margin-bottom:16px}
+.otp-amount{background:#E1F5EE;border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;font-size:13px;margin-bottom:16px}
+.otp-amount .label{color:#0F6E56}
+.otp-amount .val{font-weight:500;color:#085041}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 8px}
+.key{background:white;border:0.5px solid #e0e0e0;border-radius:12px;padding:12px;text-align:center;font-size:16px;font-weight:500;cursor:pointer;color:#1a1a1a}
+.key.del{font-size:13px;color:#888}
+.key.confirm-key{background:#1D9E75;color:white;border-color:#1D9E75;font-size:13px}
+.processing-overlay{display:none;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;flex:1}
+.spinner{width:44px;height:44px;border:3px solid #e0e0e0;border-top-color:#1D9E75;border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.proc-title{font-size:15px;font-weight:500;color:#1a1a1a;margin-bottom:6px}
+.proc-sub{font-size:12px;color:#888;text-align:center}
+
+/* TICKET */
+.ticket-card{background:white;border-radius:20px;overflow:hidden;border:0.5px solid #e5e5e5;margin-bottom:14px}
+.ticket-header{background:#1a3a2a;padding:16px;text-align:center}
+.ticket-logo{font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:2px}
+.ticket-route{font-size:20px;font-weight:500;color:white}
+.ticket-date{font-size:11px;color:rgba(255,255,255,0.5);margin-top:4px}
+.ticket-body{padding:16px}
+.ticket-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:16px;padding-bottom:16px;border-bottom:0.5px dashed #e0e0e0}
+.ticket-field .label{font-size:9px;text-transform:uppercase;letter-spacing:0.5px;color:#888;margin-bottom:2px}
+.ticket-field .value{font-size:14px;font-weight:500;color:#1a1a1a}
+.qr-container{text-align:center;padding:12px 0}
+.qr-box{width:100px;height:100px;background:white;border:0.5px solid #e0e0e0;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;margin:0 auto;overflow:hidden}
+.qr-ref{font-size:11px;font-weight:500;color:#333;margin-top:6px;letter-spacing:1px}
+.qr-sub{font-size:10px;color:#888}
+.ticket-actions{display:flex;gap:8px}
+.btn-outline{flex:1;padding:10px;font-size:12px;border:0.5px solid #ddd;border-radius:12px;background:white;color:#1D9E75;cursor:pointer;text-align:center}
+.success-screen{text-align:center;padding:24px 20px 16px}
+.success-icon{width:56px;height:56px;background:#E1F5EE;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:22px}
+.success-title{font-size:17px;font-weight:500;margin-bottom:4px}
+.success-sub{font-size:12px;color:#888;margin-bottom:14px}
+.success-ref{font-size:11px;background:#f0f0f0;padding:5px 14px;border-radius:20px;color:#555;display:inline-block;margin-bottom:14px}
+
+/* COLIS TRACKING */
+.tracking-card{background:white;border:0.5px solid #e5e5e5;border-radius:16px;overflow:hidden;margin-bottom:12px}
+.tracking-header{background:#1a3a2a;padding:14px 16px}
+.tracking-ref{font-size:11px;color:rgba(255,255,255,0.55);margin-bottom:2px}
+.tracking-route{font-size:15px;font-weight:500;color:white}
+.tracking-status-badge{display:inline-block;background:#F5A623;color:#1a1a1a;font-size:10px;font-weight:500;padding:3px 10px;border-radius:20px;margin-top:6px}
+.tracking-status-badge.arrived{background:#1D9E75;color:white}
+.tracking-body{padding:14px}
+.timeline{position:relative;padding-left:24px}
+.timeline::before{content:'';position:absolute;left:8px;top:8px;bottom:8px;width:1.5px;background:#e0e0e0}
+.tl-item{position:relative;margin-bottom:16px}
+.tl-item:last-child{margin-bottom:0}
+.tl-dot{position:absolute;left:-24px;top:3px;width:16px;height:16px;border-radius:50%;border:2px solid #ddd;background:white;display:flex;align-items:center;justify-content:center;font-size:8px}
+.tl-dot.done{background:#1D9E75;border-color:#1D9E75;color:white}
+.tl-dot.active{background:#F5A623;border-color:#F5A623;color:#1a1a1a;font-size:9px}
+.tl-dot.pending{background:white;border-color:#ddd}
+.tl-title{font-size:12px;font-weight:500;color:#1a1a1a}
+.tl-sub{font-size:10px;color:#888;margin-top:1px}
+.tl-time{font-size:10px;color:#1D9E75;margin-top:1px}
+.colis-info{background:#f8f8f5;border-radius:10px;padding:10px 12px;margin-bottom:12px}
+.colis-row{display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px}
+.colis-row .k{color:#888}
+.colis-row .v{font-weight:500;color:#1a1a1a}
+.notif-item{background:white;border:0.5px solid #e5e5e5;border-radius:12px;padding:10px 12px;margin-bottom:8px;display:flex;gap:10px;align-items:flex-start}
+.notif-icon{font-size:18px;flex-shrink:0}
+.notif-title{font-size:12px;font-weight:500;color:#1a1a1a}
+.notif-sub{font-size:11px;color:#888;margin-top:1px}
+.notif-time{font-size:10px;color:#aaa;margin-top:2px}
+
+/* DASHBOARD */
+.dash-greeting{font-size:16px;font-weight:500;margin-bottom:4px}
+.dash-date{font-size:11px;color:#888;margin-bottom:16px}
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.kpi-card{background:white;border-radius:14px;padding:12px;border:0.5px solid #e5e5e5}
+.kpi-icon{font-size:18px;margin-bottom:6px}
+.kpi-val{font-size:20px;font-weight:500;color:#1a1a1a}
+.kpi-label{font-size:10px;color:#888;margin-bottom:2px}
+.kpi-change{font-size:10px;color:#1D9E75}
+.kpi-change.down{color:#E24B4A}
+.chart-area{background:white;border-radius:14px;padding:12px;border:0.5px solid #e5e5e5;margin-bottom:10px}
+.chart-title{font-size:11px;color:#888;margin-bottom:10px}
+.bar-chart{display:flex;align-items:flex-end;gap:6px;height:60px}
+.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.bar{width:100%;background:#E1F5EE;border-radius:4px 4px 0 0}
+.bar.today{background:#1D9E75}
+.bar-day{font-size:9px;color:#aaa}
+.nav-tabs{background:#f8f8f5;padding:4px;border-radius:12px;display:flex;gap:0;margin-bottom:14px;overflow-x:auto;scrollbar-width:none}
+.nav-tab{flex:1;padding:6px 8px;font-size:11px;text-align:center;border-radius:8px;cursor:pointer;white-space:nowrap;color:#888}
+.nav-tab.active{background:white;color:#1D9E75;font-weight:500}
+.trip-list-card{background:white;border-radius:14px;padding:12px;border:0.5px solid #e5e5e5}
+.trip-list-title{font-size:12px;font-weight:500;color:#888;margin-bottom:10px;display:flex;justify-content:space-between}
+.trip-list-add{color:#1D9E75;cursor:pointer;font-size:13px}
+.trip-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid #f0f0f0}
+.trip-item:last-child{border-bottom:none}
+.trip-route{font-size:12px;font-weight:500}
+.trip-time{font-size:10px;color:#888}
+.trip-status{margin-left:auto;font-size:10px;padding:3px 8px;border-radius:20px}
+.trip-status.enroute{background:#E1F5EE;color:#0F6E56}
+.trip-status.quai{background:#FAEEDA;color:#854F0B}
+.trip-status.ouvert{background:#E6F1FB;color:#185FA5}
+
+/* SIDEBAR */
+.info-panel{width:248px;min-width:220px}
+.info-section{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px;margin-bottom:12px}
+.info-section h3{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:10px}
+.screen-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;cursor:pointer;font-size:12px;color:var(--color-text-secondary);border:none;background:transparent;width:100%;text-align:left}
+.screen-link:hover{background:var(--color-background-secondary)}
+.screen-link.active{background:#E1F5EE;color:#0F6E56;font-weight:500}
+.screen-dot{width:8px;height:8px;border-radius:50%;background:#ddd;flex-shrink:0}
+.screen-link.active .screen-dot{background:#1D9E75}
+.stat-row{display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px}
+.stat-row .k{color:var(--color-text-secondary)}
+.stat-row .v{font-weight:500;color:var(--color-text-primary)}
+.pill-green{display:inline-block;background:#E1F5EE;color:#085041;font-size:10px;padding:2px 8px;border-radius:20px;margin-top:4px}
+.tam-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.tam-circle{border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;flex-shrink:0}
+.tam-label{font-size:11px;color:var(--color-text-secondary)}
+.tam-val{font-size:12px;font-weight:500;color:var(--color-text-primary)}
+@media(max-width:700px){.info-panel{display:none}}
+</style>
+
+<h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden">Prototype interactif MonBillet.bf — plateforme de billetterie bus Burkina Faso</h2>
+
+<div class="proto-shell">
+
+<div class="phone-frame">
+<div class="phone-screen">
+<div class="status-bar"><span>9:41</span><span>▲ WiFi</span></div>
+
+<!-- S0: ONBOARDING / PITCH -->
+<div class="screen active" id="s-onboard">
+  <div class="onb-hero">
+    <div class="onb-logo">Mon<span>Billet</span>.bf</div>
+    <div class="onb-tagline">La billetterie bus du Burkina Faso</div>
+    <div class="onb-market-row">
+      <div class="onb-stat"><div class="n">5M+</div><div class="l">Voyageurs/an</div></div>
+      <div class="onb-stat"><div class="n">0%</div><div class="l">Digitalisé</div></div>
+      <div class="onb-stat"><div class="n">5</div><div class="l">Compagnies</div></div>
+    </div>
+  </div>
+  <div class="scroll-content" style="padding:14px">
+    <div class="market-card">
+      <div class="title" style="font-size:12px">📊 Taille du marché (FCFA)</div>
+      <div style="margin-bottom:8px">
+        <div class="market-labels" style="margin-bottom:3px"><span style="font-weight:500;font-size:11px;color:#1a1a1a">TAM — Marché total</span><span style="font-size:11px;color:#1a3a2a;font-weight:500">12 Mrd</span></div>
+        <div class="market-bar-wrap"><div class="market-bar dark" style="width:100%"></div></div>
+      </div>
+      <div style="margin-bottom:8px">
+        <div class="market-labels" style="margin-bottom:3px"><span style="font-weight:500;font-size:11px;color:#1a1a1a">SAM — Cible accessible</span><span style="font-size:11px;color:#1D9E75;font-weight:500">3,6 Mrd</span></div>
+        <div class="market-bar-wrap"><div class="market-bar" style="width:62%"></div></div>
+      </div>
+      <div>
+        <div class="market-labels" style="margin-bottom:3px"><span style="font-weight:500;font-size:11px;color:#1a1a1a">SOM — Cible Y1</span><span style="font-size:11px;color:#F5A623;font-weight:500">360 M</span></div>
+        <div class="market-bar-wrap"><div class="market-bar amber" style="width:20%"></div></div>
+      </div>
+    </div>
+    <div class="market-card">
+      <div class="title" style="font-size:12px">😓 Problèmes actuels</div>
+      <div class="pain-point">
+        <span class="pain-icon" style="font-size:16px">🏃</span>
+        <div><div class="pain-title">File d'attente en gare</div><div class="pain-text">Les voyageurs se déplacent physiquement, parfois plusieurs jours avant</div></div>
+      </div>
+      <div class="pain-point">
+        <span class="pain-icon" style="font-size:16px">❓</span>
+        <div><div class="pain-title">Zéro traçabilité colis</div><div class="pain-text">Pertes et retards fréquents, aucun suivi possible pour l'expéditeur</div></div>
+      </div>
+      <div class="pain-point">
+        <span class="pain-icon" style="font-size:16px">💸</span>
+        <div><div class="pain-title">Revenus non optimisés</div><div class="pain-text">Les compagnies n'ont aucune data sur l'occupation ou la demande</div></div>
+      </div>
+    </div>
+    <div class="market-card">
+      <div class="title" style="font-size:12px">💰 Modèle économique</div>
+      <div class="order-row"><span style="font-size:12px;color:#555">Commission / billet</span><span style="font-size:12px;font-weight:500;color:#1a1a1a">2–5%</span></div>
+      <div class="order-row"><span style="font-size:12px;color:#555">Frais service client</span><span style="font-size:12px;font-weight:500;color:#1a1a1a">150 FCFA/billet</span></div>
+      <div class="order-row"><span style="font-size:12px;color:#555">Abonnement compagnie</span><span style="font-size:12px;font-weight:500;color:#1a1a1a">50–150K FCFA/mois</span></div>
+      <div class="order-row" style="margin-top:4px;padding-top:6px;border-top:0.5px solid #f0f0f0"><span style="font-size:12px;color:#555">Module colis (TSR)</span><span style="font-size:12px;font-weight:500;color:#1a1a1a">75–200K FCFA/mois</span></div>
+    </div>
+    <button class="btn-green" onclick="goScreen('s-home')">Voir la démo →</button>
+  </div>
+</div>
+
+<!-- S1: HOME -->
+<div class="screen" id="s-home">
+  <div class="app-header">
+    <span class="logo"><span class="mon">Mon</span><span class="billet">Billet</span><span class="bf">.bf</span></span>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span style="font-size:11px;color:#888;border:0.5px solid #ddd;padding:3px 8px;border-radius:20px">FR</span>
+      <div style="width:32px;height:32px;border-radius:50%;background:#f5f5f0;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer" onclick="goScreen('s-colis-track')">🔔</div>
+    </div>
+  </div>
+  <div class="scroll-content">
+    <div class="hero-card">
+      <div class="hero-location">📍 Ouagadougou · Burkina Faso</div>
+      <div class="hero-title">Voyagez<br><span class="hero-accent">sans file d'attente</span></div>
+      <div class="hero-subtitle">Réservez votre siège en 2 minutes</div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="num">5</div><div class="lbl">Compagnies</div></div>
+        <div class="hero-stat"><div class="num">30+</div><div class="lbl">Destinations</div></div>
+        <div class="hero-stat"><div class="num">24/7</div><div class="lbl">Réservation</div></div>
+      </div>
+    </div>
+    <div class="tabs">
+      <div class="tab active" onclick="setTab(0,this)">🎫 Billet</div>
+      <div class="tab" onclick="setTab(1,this)">📦 Colis</div>
+      <div class="tab" onclick="setTab(2,this)">🔍 Suivi</div>
+    </div>
+    <div id="tab-billet">
+      <div style="display:flex;gap:8px;align-items:flex-start">
+        <div style="flex:1"><div class="form-group"><div class="form-label">Départ</div><div class="form-input">📍 Ouagadougou</div></div></div>
+        <button class="swap-btn">⇅</button>
+        <div style="flex:1"><div class="form-group"><div class="form-label">Destination</div><div class="form-input" id="dest-input">🏁 <span class="placeholder">Choisir ville</span></div></div></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><div class="form-label">Date</div><div class="form-input">📅 19 mars</div></div>
+        <div class="form-group"><div class="form-label">Passagers</div><div class="form-input">👤 1</div></div>
+      </div>
+      <button class="btn-primary" onclick="goSearch()">Rechercher un trajet →</button>
+    </div>
+    <div id="tab-colis" style="display:none">
+      <div class="form-group"><div class="form-label">Expéditeur</div><div class="form-input">👤 Votre nom</div></div>
+      <div class="form-group"><div class="form-label">Destination colis</div><div class="form-input">🏁 <span class="placeholder">Choisir ville</span></div></div>
+      <button class="btn-primary" onclick="goScreen('s-colis-track')">Suivre / Envoyer →</button>
+    </div>
+    <div id="tab-suivi" style="display:none">
+      <div class="form-group"><div class="form-label">Numéro de suivi</div><div class="form-input">🔍 <span class="placeholder">Ex : TSR-2026-00234</span></div></div>
+      <button class="btn-primary" onclick="goScreen('s-colis-track')">Suivre mon colis →</button>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <div class="bnav-item active">🏠<span>Accueil</span></div>
+    <div class="bnav-item" onclick="goScreen('s-results')">🔍<span>Chercher</span></div>
+    <div class="bnav-item" onclick="goScreen('s-success')">🎫<span>Billets</span></div>
+    <div class="bnav-item" onclick="goScreen('s-colis-track')">📦<span>Colis</span></div>
+    <div class="bnav-item" onclick="goScreen('s-dash')">👤<span>Profil</span></div>
+  </div>
+</div>
+
+<!-- S2: RESULTS -->
+<div class="screen" id="s-results">
+  <div class="nav-bar">
+    <button class="nav-back" onclick="goScreen('s-home')">← Retour</button>
+    <span class="nav-title">Résultats</span>
+    <span style="font-size:16px;cursor:pointer">⚙️</span>
+  </div>
+  <div class="scroll-content">
+    <div style="margin-bottom:12px">
+      <div style="font-size:15px;font-weight:500;color:#888">Ouaga → <span style="color:#1D9E75" id="dest-label">Bobo-Dioulasso</span></div>
+      <div style="font-size:11px;color:#aaa">Mer 19 mars · 1 passager · 4 résultats</div>
+    </div>
+    <div class="filter-row">
+      <div class="filter-pill active">Tous</div>
+      <div class="filter-pill">Matin</div>
+      <div class="filter-pill">Après-midi</div>
+      <div class="filter-pill">Moins cher</div>
+    </div>
+    <div class="result-card featured" onclick="goScreen('s-seats')">
+      <div class="result-header">
+        <div><div class="company-name">Rahimo</div><span class="company-class">Confort Plus</span></div>
+        <div style="text-align:right"><div class="price">3 500</div><div class="price-unit">FCFA / pers.</div></div>
+      </div>
+      <div class="route-times">
+        <div><div class="time">06:00</div><div class="time-city">Ouagadougou</div></div>
+        <div class="duration">🚌<br>5h 30min</div>
+        <div style="text-align:right"><div class="time">11:30</div><div class="time-city">Bobo-Dioulasso</div></div>
+      </div>
+      <div class="result-tags"><span class="tag">22 places</span><span class="tag green">Climatisé</span></div>
+    </div>
+    <div class="result-card" onclick="goScreen('s-seats')">
+      <div class="result-header">
+        <div><div class="company-name">Élitiste</div><span class="company-class vip">VIP</span></div>
+        <div style="text-align:right"><div class="price">5 000</div><div class="price-unit">FCFA / pers.</div></div>
+      </div>
+      <div class="route-times">
+        <div><div class="time">08:00</div><div class="time-city">Ouagadougou</div></div>
+        <div class="duration">🚌<br>5h 00min</div>
+        <div style="text-align:right"><div class="time">13:00</div><div class="time-city">Bobo-Dioulasso</div></div>
+      </div>
+      <div class="result-tags"><span class="tag">5 places</span><span class="tag">USB + Repas</span></div>
+    </div>
+    <div class="result-card" onclick="goScreen('s-seats')">
+      <div class="result-header">
+        <div><div class="company-name">TSR</div><span class="company-class">Standard</span></div>
+        <div style="text-align:right"><div class="price">3 000</div><div class="price-unit">FCFA / pers.</div></div>
+      </div>
+      <div class="route-times">
+        <div><div class="time">10:30</div><div class="time-city">Ouagadougou</div></div>
+        <div class="duration">🚌<br>6h 00min</div>
+        <div style="text-align:right"><div class="time">16:30</div><div class="time-city">Bobo-Dioulasso</div></div>
+      </div>
+      <div class="result-tags"><span class="tag">18 places</span></div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <div class="bnav-item" onclick="goScreen('s-home')">🏠<span>Accueil</span></div>
+    <div class="bnav-item active">🔍<span>Chercher</span></div>
+    <div class="bnav-item">🎫<span>Billets</span></div>
+    <div class="bnav-item" onclick="goScreen('s-colis-track')">📦<span>Colis</span></div>
+    <div class="bnav-item" onclick="goScreen('s-dash')">👤<span>Profil</span></div>
+  </div>
+</div>
+
+<!-- S3: SEATS -->
+<div class="screen" id="s-seats">
+  <div class="nav-bar">
+    <button class="nav-back" onclick="goScreen('s-results')">← Résultats</button>
+    <span class="nav-title">Votre siège</span>
+    <span style="font-size:16px">ℹ️</span>
+  </div>
+  <div class="scroll-content">
+    <div class="trip-bar">
+      <div><div style="font-size:13px;font-weight:500">Rahimo · Ouaga → Bobo</div><div style="font-size:11px;color:#888">06:00 · Bus R-07 · 44 places</div></div>
+      <div class="price" style="font-size:14px">3 500 FCFA</div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:white"></div>Libre</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f0f0f0;border-color:#e0e0e0"></div>Occupé</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#1D9E75;border-color:#1D9E75"></div>Choisi</div>
+      <div class="legend-item"><div class="legend-dot" style="border-color:#F5A623"></div>VIP</div>
+    </div>
+    <div class="seat-grid">
+      <div class="bus-front">🚗 AVANT · CHAUFFEUR</div>
+      <div class="seats-container">
+        <div class="seat-col" id="left-col"></div>
+        <div style="width:20px"></div>
+        <div class="seat-col" id="right-col"></div>
+      </div>
+    </div>
+    <button class="btn-primary" id="seat-confirm-btn" onclick="goScreen('s-baggage')" style="opacity:0.4;pointer-events:none">Confirmer le siège →</button>
+  </div>
+  <div class="bottom-nav">
+    <div class="bnav-item" onclick="goScreen('s-home')">🏠<span>Accueil</span></div>
+    <div class="bnav-item active">🔍<span>Chercher</span></div>
+    <div class="bnav-item">🎫<span>Billets</span></div>
+    <div class="bnav-item">📦<span>Colis</span></div>
+    <div class="bnav-item">👤<span>Profil</span></div>
+  </div>
+</div>
+
+<!-- S4: BAGGAGE -->
+<div class="screen" id="s-baggage">
+  <div class="nav-bar">
+    <button class="nav-back" onclick="goScreen('s-seats')">← Siège</button>
+    <span class="nav-title">Bagages</span>
+    <span style="font-size:16px">ℹ️</span>
+  </div>
+  <div class="scroll-content">
+    <div style="background:#E1F5EE;border-radius:10px;padding:10px 12px;font-size:12px;color:#0F6E56;margin-bottom:14px">ℹ️ Tout voyageur bénéficie d'un bagage cabine gratuit (max 5 kg).</div>
+    <div style="font-size:11px;font-weight:500;color:#888;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Inclus</div>
+    <div class="bag-card" style="border-color:#1D9E75">
+      <div class="bag-header"><span class="bag-icon">🎒</span><div><div class="bag-name">Bagage cabine</div><div class="bag-sub">Max 5 kg · Avec vous</div></div><span class="bag-price">Gratuit</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:500;color:#888;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Supplémentaires</div>
+    <div class="bag-card">
+      <div class="bag-header"><span class="bag-icon">🧳</span><div><div class="bag-name">Petit bagage</div><div class="bag-sub">5–15 kg · En soute</div></div><span class="bag-price">1 000<br><span style="font-size:9px;font-weight:400;color:#888">FCFA/unité</span></span></div>
+      <div class="counter"><button class="counter-btn" onclick="changeBag('small',-1)">−</button><span class="counter-val" id="small-count">0</span><button class="counter-btn" onclick="changeBag('small',1)">+</button><span style="font-size:11px;color:#888">unité(s)</span></div>
+    </div>
+    <div class="bag-card">
+      <div class="bag-header"><span class="bag-icon">📦</span><div><div class="bag-name">Grand bagage</div><div class="bag-sub">15–30 kg · En soute</div></div><span class="bag-price">2 500<br><span style="font-size:9px;font-weight:400;color:#888">FCFA/unité</span></span></div>
+      <div class="counter"><button class="counter-btn" onclick="changeBag('large',-1)">−</button><span class="counter-val" id="large-count">1</span><button class="counter-btn" onclick="changeBag('large',1)">+</button><span style="font-size:11px;color:#888">unité(s)</span></div>
+    </div>
+    <div style="background:#f8f8f5;border-radius:10px;padding:10px 12px;margin-top:4px">
+      <div class="order-title">Récapitulatif bagages</div>
+      <div class="order-row"><span>Bagage cabine</span><span style="color:#1D9E75">Gratuit</span></div>
+      <div id="bag-summary-row"><div class="order-row"><span>Grand bagage × 1</span><span>2 500 FCFA</span></div></div>
+    </div>
+    <button class="btn-primary" onclick="goScreen('s-payment')" style="margin-top:10px">Continuer →</button>
+  </div>
+  <div class="bottom-nav">
+    <div class="bnav-item" onclick="goScreen('s-home')">🏠<span>Accueil</span></div>
+    <div class="bnav-item active">🔍<span>Chercher</span></div>
+    <div class="bnav-item">🎫<span>Billets</span></div>
+    <div class="bnav-item">📦<span>Colis</span></div>
+    <div class="bnav-item">👤<span>Profil</span></div>
+  </div>
+</div>
+
+<!-- S5: PAYMENT -->
+<div class="screen" id="s-payment">
+  <div class="nav-bar">
+    <button class="nav-back" onclick="goScreen('s-baggage')">← Bagages</button>
+    <span class="nav-title">Paiement</span>
+    <span style="font-size:16px">🔒</span>
+  </div>
+  <div class="scroll-content">
+    <div class="order-summary">
+      <div class="order-title">Ouaga → Bobo-Dioulasso</div>
+      <div style="font-size:11px;color:#888;margin-bottom:8px">Rahimo · Siège <span id="seat-label-pay">12</span> · 06:00</div>
+      <div class="order-row"><span>Billet (×1)</span><span>3 500 FCFA</span></div>
+      <div class="order-row" id="pay-bag-row"><span>Grand bagage (×1)</span><span>2 500 FCFA</span></div>
+      <div class="order-row"><span>Frais de service</span><span>150 FCFA</span></div>
+      <div class="order-total"><span>Total</span><span id="pay-total">6 150 FCFA</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:500;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Mode de paiement</div>
+    <div class="pay-method selected" onclick="selectPay(this,'OM','Orange Money','#FF6600')">
+      <div class="pay-logo om">OM</div>
+      <div class="pay-info"><div class="pay-name">Orange Money</div><div class="pay-users">~45% utilisateurs BF</div></div>
+      <div class="radio-outer"><div class="radio-inner"></div></div>
+    </div>
+    <div class="pay-method" onclick="selectPay(this,'MM','Moov Money','#009900')">
+      <div class="pay-logo mm">MM</div>
+      <div class="pay-info"><div class="pay-name">Moov Money</div><div class="pay-users">~30% utilisateurs BF</div></div>
+      <div class="radio-outer"><div class="radio-inner"></div></div>
+    </div>
+    <div class="pay-method" onclick="selectPay(this,'W','Wave','#0066FF')">
+      <div class="pay-logo wv">W</div>
+      <div class="pay-info"><div class="pay-name">Wave</div><div class="pay-users">~15% utilisateurs BF</div></div>
+      <div class="radio-outer"><div class="radio-inner"></div></div>
+    </div>
+    <div class="pay-method" onclick="selectPay(this,'CB','Coris Bank','#993300')">
+      <div class="pay-logo cb">CB</div>
+      <div class="pay-info"><div class="pay-name">Coris Bank</div><div class="pay-users">~10% utilisateurs BF</div></div>
+      <div class="radio-outer"><div class="radio-inner"></div></div>
+    </div>
+    <button class="btn-primary" onclick="goScreen('s-otp')" style="margin-top:10px">Payer 6 150 FCFA →</button>
+  </div>
+  <div class="bottom-nav">
+    <div class="bnav-item" onclick="goScreen('s-home')">🏠<span>Accueil</span></div>
+    <div class="bnav-item">🔍<span>Chercher</span></div>
+    <div class="bnav-item active">🎫<span>Billets</span></div>
+    <div class="bnav-item">📦<span>Colis</span></div>
+    <div class="bnav-item">👤<span>Profil</span></div>
+  </div>
+</div>
+
+<!-- S6: OTP -->
+<div class="screen" id="s-otp">
+  <div class="nav-bar">
+    <button class="nav-back" onclick="goScreen('s-payment')">← Paiement</button>
+    <span class="nav-title">Confirmer le paiement</span>
+    <span style="font-size:16px">🔒</span>
+  </div>
+  <div id="otp-form-area" style="flex:1;overflow-y:auto;display:flex;flex-direction:column">
+    <div class="scroll-content" style="flex:1">
+      <div class="otp-hero">
+        <div class="otp-op-badge">
+          <div class="otp-op-dot" id="otp-op-dot" style="background:#FF6600">OM</div>
+          <span style="font-size:13px;font-weight:500;color:#1a1a1a" id="otp-op-name">Orange Money</span>
+        </div>
+        <div class="otp-title">Entrez votre code PIN</div>
+        <div class="otp-sub">Un code de confirmation a été envoyé au</div>
+        <div class="otp-phone-display">+226 70 •• •• 47</div>
+        <div class="otp-amount"><span class="label">Montant à payer</span><span class="val" id="otp-amount-val">6 150 FCFA</span></div>
+        <div class="otp-boxes" id="otp-boxes">
+          <div class="otp-box active" id="otp-b0"></div>
+          <div class="otp-box" id="otp-b1"></div>
+          <div class="otp-box" id="otp-b2"></div>
+          <div class="otp-box" id="otp-b3"></div>
+        </div>
+        <div class="otp-resend" onclick="resendOtp()">Renvoyer le code (0:59)</div>
+      </div>
+      <div class="keypad">
+        <div class="key" onclick="otpKey('1')">1</div>
+        <div class="key" onclick="otpKey('2')">2</div>
+        <div class="key" onclick="otpKey('3')">3</div>
+        <div class="key" onclick="otpKey('4')">4</div>
+        <div class="key" onclick="otpKey('5')">5</div>
+        <div class="key" onclick="otpKey('6')">6</div>
+        <div class="key" onclick="otpKey('7')">7</div>
+        <div class="key" onclick="otpKey('8')">8</div>
+        <div class="key" onclick="otpKey('9')">9</div>
+        <div class="key del" onclick="otpKey('del')">⌫</div>
+        <div class="key" onclick="otpKey('0')">0</div>
+        <div class="key confirm-key" onclick="otpConfirm()">OK ✓</div>
+      </div>
+    </div>
+  </div>
+  <div id="otp-processing" style="display:none;flex-direction:column;flex:1">
+    <div class="processing-overlay" style="display:flex">
+      <div class="spinner"></div>
+      <div class="proc-title">Traitement en cours...</div>
+      <div class="proc-sub">Validation du paiement<br>Orange Money</div>
+    </div>
+  </div>
+</div>
+
+<!-- S7: SUCCESS + TICKET -->
+<div class="screen" id="s-success">
+  <div class="app-header">
+    <span class="logo"><span class="mon">Mon</span><span class="billet">Billet</span><span class="bf">.bf</span></span>
+    <span style="font-size:16px;cursor:pointer">···</span>
+  </div>
+  <div class="scroll-content">
+    <div class="success-screen">
+      <div class="success-icon">✅</div>
+      <div class="success-title">Paiement confirmé !</div>
+      <div class="success-sub">Votre billet a été émis avec succès</div>
+      <div class="success-ref">réf. MB-2026-00847</div>
+    </div>
+    <div class="ticket-card">
+      <div class="ticket-header">
+        <div class="ticket-logo">MonBillet.bf</div>
+        <div class="ticket-route">Ouaga → Bobo</div>
+        <div class="ticket-date">Mer 19 mars 2026 · 06:00 · Rahimo R-07</div>
+      </div>
+      <div class="ticket-body">
+        <div class="ticket-grid">
+          <div class="ticket-field"><div class="label">Siège</div><div class="value" id="ticket-seat">12</div></div>
+          <div class="ticket-field"><div class="label">Classe</div><div class="value">Confort</div></div>
+          <div class="ticket-field"><div class="label">Passager</div><div class="value">K.Evans</div></div>
+          <div class="ticket-field"><div class="label">Durée</div><div class="value">5h30</div></div>
+        </div>
+        <div class="qr-container">
+          <div style="font-size:10px;color:#888;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px">Scanner à la gare</div>
+          <div class="qr-box">
+            <svg width="80" height="80" viewBox="0 0 80 80"><rect x="0" y="0" width="80" height="80" fill="white"/><rect x="5" y="5" width="30" height="30" fill="none" stroke="#1a1a1a" stroke-width="3"/><rect x="10" y="10" width="20" height="20" fill="#1a1a1a"/><rect x="45" y="5" width="30" height="30" fill="none" stroke="#1a1a1a" stroke-width="3"/><rect x="50" y="10" width="20" height="20" fill="#1a1a1a"/><rect x="5" y="45" width="30" height="30" fill="none" stroke="#1a1a1a" stroke-width="3"/><rect x="10" y="50" width="20" height="20" fill="#1a1a1a"/><rect x="45" y="45" width="8" height="8" fill="#1a1a1a"/><rect x="57" y="45" width="8" height="8" fill="#1a1a1a"/><rect x="45" y="57" width="8" height="8" fill="#1a1a1a"/><rect x="57" y="57" width="8" height="8" fill="#1a1a1a"/><rect x="38" y="38" width="5" height="5" fill="#1a1a1a"/></svg>
+          </div>
+          <div class="qr-ref">MB-2026-00847</div>
+          <div class="qr-sub">Présentez ce code à l'agent Rahimo</div>
+        </div>
+        <div class="ticket-actions">
+          <div class="btn-outline">📄 PDF</div>
+          <div class="btn-outline">🔔 Rappel</div>
+        </div>
+      </div>
+    </div>
+    <button class="btn-outline-g" onclick="goScreen('s-home')">Retour à l'accueil</button>
+  </div>
+  <div class="bottom-nav">
+    <div class="bnav-item" onclick="goScreen('s-home')">🏠<span>Accueil</span></div>
+    <div class="bnav-item">🔍<span>Chercher</span></div>
+    <div class="bnav-item active">🎫<span>Billets</span></div>
+    <div class="bnav-item" onclick="goScreen('s-colis-track')">📦<span>Colis</span></div>
+    <div class="bnav-item" onclick="goScreen('s-dash')">👤<span>Profil</span></div>
+  </div>
+</div>
+
+<!-- S8: COLIS TRACKING -->
+<div class="screen" id="s-colis-track">
+  <div class="nav-bar">
+    <button class="nav-back" onclick="goScreen('s-home')">← Accueil</button>
+    <span class="nav-title">Traçabilité colis</span>
+    <span style="font-size:16px">📦</span>
+  </div>
+  <div class="scroll-content">
+    <div class="tracking-card">
+      <div class="tracking-header">
+        <div class="tracking-ref">N° de suivi · TSR</div>
+        <div class="tracking-route">Ouaga → Bobo-Dioulasso</div>
+        <span class="tracking-status-badge">En transit</span>
+      </div>
+      <div class="tracking-body">
+        <div class="colis-info">
+          <div class="colis-row"><span class="k">Expéditeur</span><span class="v">Hamidou K.</span></div>
+          <div class="colis-row"><span class="k">Destinataire</span><span class="v">Fatoumata S.</span></div>
+          <div class="colis-row"><span class="k">Contenu</span><span class="v">Vêtements · 8 kg</span></div>
+          <div class="colis-row"><span class="k">Réf. colis</span><span class="v">TSR-2026-00234</span></div>
+        </div>
+        <div style="font-size:11px;font-weight:500;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Suivi en temps réel</div>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-dot done">✓</div>
+            <div class="tl-title">Dépôt en gare</div>
+            <div class="tl-sub">Gare de Ouagadougou</div>
+            <div class="tl-time">Mer 19 mars · 05:15</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot done">✓</div>
+            <div class="tl-title">Chargement bus</div>
+            <div class="tl-sub">Bus R-07 · QR scanné par agent</div>
+            <div class="tl-time">Mer 19 mars · 05:50</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot active">→</div>
+            <div class="tl-title">En transit</div>
+            <div class="tl-sub">Sur la route Ouaga–Bobo</div>
+            <div class="tl-time">Depuis 06:00 · Arrivée estimée 11:30</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot pending"></div>
+            <div class="tl-title" style="color:#aaa">Arrivée à destination</div>
+            <div class="tl-sub" style="color:#bbb">Gare de Bobo-Dioulasso</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot pending"></div>
+            <div class="tl-title" style="color:#aaa">Remise au destinataire</div>
+            <div class="tl-sub" style="color:#bbb">Signature numérique requise</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:11px;font-weight:500;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Notifications reçues</div>
+    <div class="notif-item">
+      <span class="notif-icon" style="font-size:16px">✅</span>
+      <div><div class="notif-title">Colis pris en charge</div><div class="notif-sub">TSR confirme la réception de votre colis en gare</div><div class="notif-time">05:16 · SMS + Push</div></div>
+    </div>
+    <div class="notif-item">
+      <span class="notif-icon" style="font-size:16px">🚌</span>
+      <div><div class="notif-title">Départ du bus R-07</div><div class="notif-sub">Votre colis est en route vers Bobo-Dioulasso</div><div class="notif-time">06:03 · SMS + Push</div></div>
+    </div>
+    <div class="notif-item" style="opacity:0.5">
+      <span class="notif-icon" style="font-size:16px">📍</span>
+      <div><div class="notif-title">Arrivée à destination</div><div class="notif-sub">En attente · Notification prévue à 11:30</div><div class="notif-time">En attente</div></div>
+    </div>
+    <button class="btn-outline-g" onclick="simulateArrival()" style="margin-top:6px">Simuler l'arrivée →</button>
+  </div>
+  <div class="bottom-nav">
+    <div class="bnav-item" onclick="goScreen('s-home')">🏠<span>Accueil</span></div>
+    <div class="bnav-item">🔍<span>Chercher</span></div>
+    <div class="bnav-item">🎫<span>Billets</span></div>
+    <div class="bnav-item active">📦<span>Colis</span></div>
+    <div class="bnav-item" onclick="goScreen('s-dash')">👤<span>Profil</span></div>
+  </div>
+</div>
+
+<!-- S9: DASHBOARD -->
+<div class="screen" id="s-dash">
+  <div class="app-header">
+    <span class="logo"><span class="mon">Mon</span><span class="billet">Billet</span><span class="bf">.bf</span> <span style="font-size:11px;color:#888;font-weight:400">Admin</span></span>
+    <div style="width:28px;height:28px;border-radius:50%;background:#1a3a2a;display:flex;align-items:center;justify-content:center;font-size:12px;color:white;font-weight:500">R</div>
+  </div>
+  <div class="scroll-content">
+    <div class="nav-tabs">
+      <div class="nav-tab active" onclick="setDashTab('overview',this)">Dashboard</div>
+      <div class="nav-tab" onclick="setDashTab('voyages',this)">Voyages</div>
+      <div class="nav-tab" onclick="setDashTab('colis',this)">Colis</div>
+    </div>
+    <div id="dash-overview">
+      <div class="dash-greeting">Bonjour, Rahimo 👋</div>
+      <div class="dash-date">Mer 19 mars 2026 · 09h58</div>
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-icon">🎫</div><div class="kpi-val">247</div><div class="kpi-label">Billets vendus</div><div class="kpi-change">↑ +18% vs hier</div></div>
+        <div class="kpi-card"><div class="kpi-icon">💰</div><div class="kpi-val">864K</div><div class="kpi-label">Revenus FCFA</div><div class="kpi-change">↑ +12%</div></div>
+        <div class="kpi-card"><div class="kpi-icon">💺</div><div class="kpi-val">78%</div><div class="kpi-label">Occupation</div><div class="kpi-change">↑ +5 pts</div></div>
+        <div class="kpi-card"><div class="kpi-icon">📦</div><div class="kpi-val">43</div><div class="kpi-label">Colis transit</div><div class="kpi-change down">⚠ 2 alertes</div></div>
+      </div>
+      <div class="chart-area">
+        <div class="chart-title">Ventes · 7 derniers jours</div>
+        <div class="bar-chart" id="bar-chart"></div>
+      </div>
+    </div>
+    <div id="dash-voyages" style="display:none">
+      <div class="trip-list-card">
+        <div class="trip-list-title">Voyages actifs <span class="trip-list-add">+ Nouveau</span></div>
+        <div class="trip-item"><span style="font-size:18px">🚌</span><div><div class="trip-route">Ouaga → Bobo-Dioulasso</div><div class="trip-time">Bus R-07 · 19/03/2026</div></div><span class="trip-status enroute">En route</span></div>
+        <div class="trip-item"><span style="font-size:18px">🚌</span><div><div class="trip-route">Ouaga → Koudougou</div><div class="trip-time">Bus R-02 · 08:00</div></div><span class="trip-status quai">À quai</span></div>
+        <div class="trip-item"><span style="font-size:18px">🚌</span><div><div class="trip-route">Bobo → Ouaga</div><div class="trip-time">Bus R-03 · 14:00</div></div><span class="trip-status ouvert">Ouvert</span></div>
+      </div>
+    </div>
+    <div id="dash-colis" style="display:none">
+      <div class="trip-list-card">
+        <div class="trip-list-title">Colis en transit <span style="font-size:10px;background:#FAEEDA;color:#854F0B;padding:2px 8px;border-radius:20px">⚠ 2 alertes</span></div>
+        <div class="trip-item"><span style="font-size:18px">📦</span><div><div class="trip-route">TSR-2026-00234</div><div class="trip-time">Ouaga → Bobo · 8 kg</div></div><span class="trip-status enroute">En route</span></div>
+        <div class="trip-item"><span style="font-size:18px">📦</span><div><div class="trip-route">TSR-2026-00241</div><div class="trip-time">Ouaga → Koudougou</div></div><span class="trip-status ouvert">Livré</span></div>
+        <div class="trip-item"><span style="font-size:18px">⚠️</span><div><div class="trip-route" style="color:#E24B4A">TSR-2026-00198</div><div class="trip-time">Retard signalé · Bobo → Ouaga</div></div><span class="trip-status quai" style="background:#FCEBEB;color:#A32D2D">Retard</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <div class="bnav-item" onclick="goScreen('s-home')">🏠<span>Accueil</span></div>
+    <div class="bnav-item">🔍<span>Chercher</span></div>
+    <div class="bnav-item">🎫<span>Billets</span></div>
+    <div class="bnav-item" onclick="goScreen('s-colis-track')">📦<span>Colis</span></div>
+    <div class="bnav-item active">👤<span>Profil</span></div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="info-panel">
+  <div class="info-section">
+    <h3>Navigation prototype</h3>
+    <button class="screen-link" id="link-s-onboard" onclick="goScreenPanel('s-onboard')"><span class="screen-dot"></span>0. Pitch investisseurs</button>
+    <button class="screen-link active" id="link-s-home" onclick="goScreenPanel('s-home')"><span class="screen-dot"></span>1. Accueil & Recherche</button>
+    <button class="screen-link" id="link-s-results" onclick="goScreenPanel('s-results')"><span class="screen-dot"></span>2. Résultats de trajet</button>
+    <button class="screen-link" id="link-s-seats" onclick="goScreenPanel('s-seats')"><span class="screen-dot"></span>3. Sélection de siège</button>
+    <button class="screen-link" id="link-s-baggage" onclick="goScreenPanel('s-baggage')"><span class="screen-dot"></span>4. Déclaration bagages</button>
+    <button class="screen-link" id="link-s-payment" onclick="goScreenPanel('s-payment')"><span class="screen-dot"></span>5. Paiement mobile</button>
+    <button class="screen-link" id="link-s-otp" onclick="goScreenPanel('s-otp')"><span class="screen-dot"></span>6. Validation OTP PIN ✦ Nouveau</button>
+    <button class="screen-link" id="link-s-success" onclick="goScreenPanel('s-success')"><span class="screen-dot"></span>7. E-Ticket / QR Code</button>
+    <button class="screen-link" id="link-s-colis-track" onclick="goScreenPanel('s-colis-track')"><span class="screen-dot"></span>8. Traçabilité colis ✦ Nouveau</button>
+    <button class="screen-link" id="link-s-dash" onclick="goScreenPanel('s-dash')"><span class="screen-dot"></span>9. Back-office Admin</button>
+  </div>
+  <div class="info-section">
+    <h3>Marché cible (TAM/SAM/SOM)</h3>
+    <div class="tam-row">
+      <div class="tam-circle" style="width:36px;height:36px;background:#1a3a2a"><span style="font-size:9px;color:white;font-weight:500;text-align:center;line-height:1.1">TAM</span></div>
+      <div><div class="tam-val">12 Mrd FCFA</div><div class="tam-label">Marché total transport BF</div></div>
+    </div>
+    <div class="tam-row">
+      <div class="tam-circle" style="width:30px;height:30px;background:#1D9E75;margin-left:3px"><span style="font-size:9px;color:white;font-weight:500;text-align:center;line-height:1.1">SAM</span></div>
+      <div><div class="tam-val">3,6 Mrd FCFA</div><div class="tam-label">Compagnies digitalisables</div></div>
+    </div>
+    <div class="tam-row">
+      <div class="tam-circle" style="width:24px;height:24px;background:#F5A623;margin-left:6px"><span style="font-size:8px;color:#1a1a1a;font-weight:500;text-align:center;line-height:1">SOM</span></div>
+      <div><div class="tam-val">360 M FCFA</div><div class="tam-label">Objectif année 1</div></div>
+    </div>
+  </div>
+  <div class="info-section">
+    <h3>Stack & intégrations</h3>
+    <div class="stat-row"><span class="k">Mobile</span><span class="v">React Native</span></div>
+    <div class="stat-row"><span class="k">Web</span><span class="v">Next.js</span></div>
+    <div class="stat-row"><span class="k">Paiement</span><span class="v">CinetPay API</span></div>
+    <div class="stat-row"><span class="k">Traçabilité</span><span class="v">QR + Firebase</span></div>
+    <div class="stat-row"><span class="k">OTP</span><span class="v">SMS Gateway</span></div>
+    <span class="pill-green">Marché 0% digitalisé</span>
+  </div>
+</div>
+
+</div>
+
+<script>
+let currentScreen='s-home';
+let selectedSeat=null;
+let smallBags=0,largeBags=1;
+let otpCode=[];
+let selectedPayOp={code:'OM',name:'Orange Money',color:'#FF6600'};
+const occupied=[3,5,8,13,18,23,28,33,38,43];
+const vipSeats=[1,4];
+
+function goScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const t=document.getElementById(id);
+  if(t){t.classList.add('active');const sc=t.querySelector('.scroll-content');if(sc)sc.scrollTop=0;}
+  currentScreen=id;
+  updatePanelLinks();
+  if(id==='s-seats'&&!selectedSeat)buildSeats();
+  if(id==='s-otp')resetOtp();
+  if(id==='s-dash')buildChart();
+}
+
+function goScreenPanel(id){
+  goScreen(id);
+  document.querySelectorAll('.screen-link').forEach(l=>l.classList.remove('active'));
+  const l=document.getElementById('link-'+id);
+  if(l)l.classList.add('active');
+}
+
+function updatePanelLinks(){
+  document.querySelectorAll('.screen-link').forEach(l=>l.classList.remove('active'));
+  const l=document.getElementById('link-'+currentScreen);
+  if(l)l.classList.add('active');
+}
+
+function goSearch(){
+  const cities=['Bobo-Dioulasso','Koudougou','Ouahigouya','Banfora','Dédougou'];
+  const city=cities[Math.floor(Math.random()*cities.length)];
+  const di=document.getElementById('dest-input');
+  if(di)di.innerHTML='🏁 '+city;
+  const dl=document.getElementById('dest-label');
+  if(dl)dl.textContent=city;
+  goScreen('s-results');
+}
+
+function setTab(idx,el){
+  document.querySelectorAll('.tabs .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ['tab-billet','tab-colis','tab-suivi'].forEach((d,i)=>{
+    const e=document.getElementById(d);
+    if(e)e.style.display=i===idx?'block':'none';
+  });
+}
+
+function buildSeats(){
+  const lc=document.getElementById('left-col');
+  const rc=document.getElementById('right-col');
+  if(!lc||!rc)return;
+  lc.innerHTML='';rc.innerHTML='';
+  for(let i=1;i<=44;i++){
+    const s=document.createElement('div');
+    s.className='seat';
+    s.textContent=i;
+    s.dataset.num=i;
+    if(occupied.includes(i))s.classList.add('occupied');
+    else if(i===selectedSeat)s.classList.add('selected');
+    else if(vipSeats.includes(i))s.classList.add('vip');
+    if(!occupied.includes(i))s.onclick=()=>selectSeat(i);
+    const row=Math.ceil(i/4);
+    const posInRow=((i-1)%4);
+    if(posInRow<2)lc.appendChild(s);else rc.appendChild(s);
+  }
+}
+
+function selectSeat(num){
+  selectedSeat=num;
+  buildSeats();
+  const btn=document.getElementById('seat-confirm-btn');
+  if(btn){btn.style.opacity='1';btn.style.pointerEvents='auto';}
+  const sl=document.getElementById('seat-label-pay');
+  if(sl)sl.textContent=num;
+  const ts=document.getElementById('ticket-seat');
+  if(ts)ts.textContent=num;
+}
+
+function selectPay(el,code,name,color){
+  document.querySelectorAll('.pay-method').forEach(m=>m.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedPayOp={code,name,color};
+  const btn=el.closest('.scroll-content')?.querySelector('.btn-primary');
+}
+
+function changeBag(type,delta){
+  if(type==='small'){smallBags=Math.max(0,smallBags+delta);document.getElementById('small-count').textContent=smallBags;}
+  else{largeBags=Math.max(0,largeBags+delta);document.getElementById('large-count').textContent=largeBags;}
+  updateBagSummary();updatePayTotal();
+}
+
+function updateBagSummary(){
+  const r=document.getElementById('bag-summary-row');
+  if(!r)return;
+  let html='';
+  if(smallBags>0)html+=`<div class="order-row"><span>Petit bagage x${smallBags}</span><span>${(smallBags*1000).toLocaleString()} FCFA</span></div>`;
+  if(largeBags>0)html+=`<div class="order-row"><span>Grand bagage x${largeBags}</span><span>${(largeBags*2500).toLocaleString()} FCFA</span></div>`;
+  if(!html)html='<div class="order-row" style="color:#aaa"><span>Aucun bagage supp.</span><span>—</span></div>';
+  r.innerHTML=html;
+}
+
+function updatePayTotal(){
+  const total=3500+smallBags*1000+largeBags*2500+150;
+  const e=document.getElementById('pay-total');
+  if(e)e.textContent=total.toLocaleString()+' FCFA';
+  const oa=document.getElementById('otp-amount-val');
+  if(oa)oa.textContent=total.toLocaleString()+' FCFA';
+}
+
+function resetOtp(){
+  otpCode=[];
+  const dot=document.getElementById('otp-op-dot');
+  const nm=document.getElementById('otp-op-name');
+  if(dot){dot.textContent=selectedPayOp.code;dot.style.background=selectedPayOp.color;}
+  if(nm)nm.textContent=selectedPayOp.name;
+  for(let i=0;i<4;i++){
+    const b=document.getElementById('otp-b'+i);
+    if(b){b.textContent='';b.className='otp-box'+(i===0?' active':'');}
+  }
+  const fa=document.getElementById('otp-form-area');
+  const pr=document.getElementById('otp-processing');
+  if(fa)fa.style.display='flex';
+  if(pr)pr.style.display='none';
+}
+
+function otpKey(k){
+  if(k==='del'){
+    if(otpCode.length>0){
+      otpCode.pop();
+      renderOtp();
+    }
+    return;
+  }
+  if(otpCode.length>=4)return;
+  otpCode.push(k);
+  renderOtp();
+  if(otpCode.length===4){
+    setTimeout(()=>otpConfirm(),300);
+  }
+}
+
+function renderOtp(){
+  for(let i=0;i<4;i++){
+    const b=document.getElementById('otp-b'+i);
+    if(!b)return;
+    b.className='otp-box';
+    if(i<otpCode.length){b.textContent='•';b.classList.add('filled');}
+    else{b.textContent='';if(i===otpCode.length)b.classList.add('active');}
+  }
+}
+
+function otpConfirm(){
+  if(otpCode.length===0)return;
+  const fa=document.getElementById('otp-form-area');
+  const pr=document.getElementById('otp-processing');
+  if(fa)fa.style.display='none';
+  if(pr)pr.style.display='flex';
+  setTimeout(()=>goScreen('s-success'),2200);
+}
+
+function resendOtp(){
+  otpCode=[];renderOtp();
+}
+
+function simulateArrival(){
+  const tl=document.querySelector('#s-colis-track .timeline');
+  if(!tl)return;
+  const items=tl.querySelectorAll('.tl-item');
+  if(items[2]){
+    const dot=items[2].querySelector('.tl-dot');
+    if(dot){dot.className='tl-dot done';dot.textContent='✓';}
+    const title=items[2].querySelector('.tl-title');
+    if(title)title.style.color='';
+  }
+  if(items[3]){
+    const dot=items[3].querySelector('.tl-dot');
+    if(dot){dot.className='tl-dot active';dot.textContent='→';}
+    const title=items[3].querySelector('.tl-title');
+    if(title){title.style.color='';title.textContent='Arrivé à destination ✓';}
+    const sub=items[3].querySelector('.tl-sub');
+    if(sub){sub.style.color='';sub.textContent='Gare de Bobo-Dioulasso · 11:28';}
+    const t=document.createElement('div');
+    t.className='tl-time';t.textContent='Mer 19 mars · 11:28';
+    items[3].appendChild(t);
+  }
+  const badge=document.querySelector('#s-colis-track .tracking-status-badge');
+  if(badge){badge.textContent='Arrivé';badge.className='tracking-status-badge arrived';}
+  const notifs=document.querySelector('#s-colis-track .notif-item:last-of-type');
+  if(notifs){
+    notifs.style.opacity='1';
+    const nt=notifs.querySelector('.notif-title');
+    if(nt)nt.textContent='Colis arrivé à Bobo-Dioulasso !';
+    const ns=notifs.querySelector('.notif-sub');
+    if(ns)ns.textContent='Fatoumata S. peut retirer le colis en gare';
+    const ntm=notifs.querySelector('.notif-time');
+    if(ntm)ntm.textContent='11:28 · SMS + Push envoyés';
+    const ni=notifs.querySelector('.notif-icon');
+    if(ni)ni.textContent='📍';
+  }
+}
+
+function setDashTab(tab,el){
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ['dash-overview','dash-voyages','dash-colis'].forEach(id=>{
+    const e=document.getElementById(id);
+    if(e)e.style.display='none';
+  });
+  const m={'overview':'dash-overview','voyages':'dash-voyages','colis':'dash-colis'};
+  const e=document.getElementById(m[tab]);
+  if(e)e.style.display='block';
+}
+
+function buildChart(){
+  const bc=document.getElementById('bar-chart');
+  if(!bc||bc.children.length>0)return;
+  const days=['Jeu','Ven','Sam','Dim','Lun','Mar','Mer'];
+  const vals=[58,72,95,61,83,76,100];
+  days.forEach((d,i)=>{
+    const w=document.createElement('div');w.className='bar-wrap';
+    const b=document.createElement('div');b.className='bar'+(i===6?' today':'');
+    b.style.height=Math.round(vals[i]*0.6)+'px';
+    const l=document.createElement('div');l.className='bar-day';l.textContent=d;
+    w.appendChild(b);w.appendChild(l);bc.appendChild(w);
+  });
+}
+
+goScreen('s-home');
+buildChart();
+</script>
