@@ -1,385 +1,544 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="light">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>MonBillet.bf — Prototype MVP</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>MonBillet.bf</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden;background:#f0f0ec;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
-
-/* ── DESKTOP SHELL ── */
-.desktop-shell{display:flex;height:100vh;align-items:flex-start;justify-content:center;gap:28px;padding:24px;background:#f0f0ec;overflow-y:auto}
-.phone-frame{width:340px;flex-shrink:0;background:#1a1a1a;border-radius:44px;padding:12px;box-shadow:0 0 0 1px #333,0 24px 60px rgba(0,0,0,0.3)}
-.phone-inner{background:#f5f5f0;border-radius:34px;overflow:hidden;height:700px;display:flex;flex-direction:column}
-.status-bar{background:white;padding:10px 20px 6px;display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:600;color:#1a1a1a;flex-shrink:0}
-.sidebar{width:260px;flex-shrink:0}
-
-/* ── MOBILE FULL SCREEN ── */
-.mobile-shell{display:none;height:100%;flex-direction:column}
-.mobile-shell .phone-inner{flex:1;border-radius:0;height:100%}
-
-/* ── RESPONSIVE: show mobile on small screens ── */
-@media(max-width:600px){
-  body{overflow:hidden}
-  .desktop-shell{display:none}
-  .mobile-shell{display:flex}
+:root {
+  --bg: #f0f0ec;
+  --surface: #ffffff;
+  --surface2: #f8f8f5;
+  --border: rgba(0,0,0,0.09);
+  --border2: rgba(0,0,0,0.15);
+  --text: #1a1a1a;
+  --text2: #555;
+  --text3: #999;
+  --green: #1D9E75;
+  --green-dark: #0F6E56;
+  --green-light: #E1F5EE;
+  --green-text: #085041;
+  --amber: #F5A623;
+  --amber-light: #FAEEDA;
+  --amber-text: #854F0B;
+  --dark: #1a3a2a;
+  --red: #E24B4A;
+  --red-light: #FCEBEB;
+  --blue-light: #E6F1FB;
+  --blue-text: #185FA5;
+  --radius: 14px;
+  --radius-lg: 20px;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+[data-theme="dark"] {
+  --bg: #0f0f0f;
+  --surface: #1c1c1e;
+  --surface2: #2c2c2e;
+  --border: rgba(255,255,255,0.1);
+  --border2: rgba(255,255,255,0.18);
+  --text: #f0f0f0;
+  --text2: #aaa;
+  --text3: #666;
+  --green-light: #0a2e22;
+  --green-text: #5DCAA5;
+  --amber-light: #2e1e00;
+  --amber-text: #F5A623;
+  --red-light: #2e0a0a;
+  --blue-light: #0a1e2e;
+  --blue-text: #85B7EB;
+  --shadow: 0 2px 12px rgba(0,0,0,0.4);
 }
 
-/* ── APP SCREENS ── */
-.screen{display:none;flex-direction:column;height:100%;background:#f5f5f0}
-.screen.active{display:flex}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;background:var(--bg);overflow:hidden;color:var(--text)}
 
-.app-header{background:white;padding:12px 16px;border-bottom:0.5px solid #e5e5e5;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
-.logo{font-size:17px;font-weight:700;letter-spacing:-0.3px}
-.logo .mon{color:#1a3a2a}.logo .billet{color:#F5A623}.logo .bf{color:#1a3a2a}
+/* ── LAYOUT ── */
+.desktop-wrap{display:flex;height:100vh;align-items:flex-start;justify-content:center;gap:28px;padding:24px;background:var(--bg);overflow-y:auto}
+.phone-frame{width:360px;flex-shrink:0;background:#111;border-radius:48px;padding:12px;box-shadow:0 0 0 1px #2a2a2a,0 32px 80px rgba(0,0,0,0.35)}
+.phone-inner{background:var(--bg);border-radius:38px;overflow:hidden;height:720px;display:flex;flex-direction:column;position:relative}
+.statusbar{background:var(--surface);padding:12px 22px 6px;display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:700;color:var(--text);flex-shrink:0;letter-spacing:0.2px}
+.sidebar{width:270px;flex-shrink:0}
 
-.nav-bar{background:white;padding:10px 16px;border-bottom:0.5px solid #e5e5e5;display:flex;align-items:center;gap:10px;flex-shrink:0}
-.nav-back{font-size:12px;color:#1D9E75;cursor:pointer;padding:5px 12px;border:0.5px solid #1D9E75;border-radius:20px;background:transparent}
-.nav-title{font-size:15px;font-weight:600;color:#1a1a1a;flex:1;text-align:center}
+.mobile-wrap{display:none;height:100%;flex-direction:column}
+.mobile-wrap .phone-inner{flex:1;border-radius:0;height:100%}
 
-.scroll-area{flex:1;overflow-y:auto;padding:16px;-webkit-overflow-scrolling:touch}
-.scroll-area::-webkit-scrollbar{display:none}
+@media(max-width:600px){
+  .desktop-wrap{display:none}
+  .mobile-wrap{display:flex}
+}
 
-.bottom-nav{background:white;border-top:0.5px solid #e5e5e5;padding:8px 0 max(10px,env(safe-area-inset-bottom));display:flex;justify-content:space-around;flex-shrink:0}
-.bnav-item{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;color:#aaa;cursor:pointer;padding:2px 8px;user-select:none}
-.bnav-item.active{color:#1D9E75}
-.bnav-icon{font-size:20px;line-height:1}
+/* ── SCREEN TRANSITIONS ── */
+.screen{display:none;flex-direction:column;height:100%;background:var(--bg);position:absolute;top:0;left:0;width:100%;opacity:0;transform:translateX(30px);transition:opacity .28s ease,transform .28s ease}
+.screen.active{display:flex;opacity:1;transform:translateX(0);position:relative}
+.screen.slide-back{transform:translateX(-20px)}
+
+/* ── SPLASH ── */
+#s-splash{background:var(--dark);align-items:center;justify-content:center;gap:0}
+.splash-logo{font-size:36px;font-weight:800;color:white;letter-spacing:-1px;opacity:0;transform:translateY(20px);animation:fadeUp .6s .3s ease forwards}
+.splash-logo span{color:var(--amber)}
+.splash-tagline{font-size:14px;color:rgba(255,255,255,0.5);margin-top:6px;opacity:0;animation:fadeUp .5s .7s ease forwards}
+.splash-loader{width:40px;height:3px;background:rgba(255,255,255,0.15);border-radius:20px;margin-top:40px;overflow:hidden;opacity:0;animation:fadeUp .4s .9s ease forwards}
+.splash-bar{height:100%;background:var(--amber);border-radius:20px;animation:loadBar 1.4s 1s ease forwards}
+@keyframes loadBar{from{width:0}to{width:100%}}
+@keyframes fadeUp{to{opacity:1;transform:none}}
+
+/* ── HEADERS ── */
+.app-header{background:var(--surface);padding:13px 16px;border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.logo{font-size:18px;font-weight:800;letter-spacing:-0.5px}
+.logo .mon{color:var(--dark)}.logo .billet{color:var(--amber)}.logo .bf{color:var(--dark)}
+[data-theme="dark"] .logo .mon,[data-theme="dark"] .logo .bf{color:#fff}
+.nav-bar{background:var(--surface);padding:11px 16px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.nav-back{font-size:12px;color:var(--green);cursor:pointer;padding:6px 13px;border:0.5px solid var(--green);border-radius:20px;background:transparent;font-weight:600}
+.nav-title{font-size:16px;font-weight:700;color:var(--text);flex:1;text-align:center}
+
+/* ── SCROLL ── */
+.scroll{flex:1;overflow-y:auto;padding:16px;-webkit-overflow-scrolling:touch}
+.scroll::-webkit-scrollbar{display:none}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{background:var(--surface);border-top:0.5px solid var(--border);padding:8px 0 max(12px,env(safe-area-inset-bottom));display:flex;justify-content:space-around;flex-shrink:0}
+.bnav{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--text3);cursor:pointer;padding:2px 10px;user-select:none;transition:color .2s}
+.bnav.active{color:var(--green)}
+.bnav-icon{font-size:22px;line-height:1}
 
 /* ── BUTTONS ── */
-.btn-primary{background:#F5A623;color:#1a1a1a;border:none;border-radius:14px;padding:15px;font-size:14px;font-weight:600;width:100%;cursor:pointer;margin-top:10px;transition:opacity .15s}
-.btn-primary:active{opacity:.8}
-.btn-green{background:#1D9E75;color:white;border:none;border-radius:14px;padding:15px;font-size:14px;font-weight:600;width:100%;cursor:pointer;margin-top:10px}
-.btn-green:active{opacity:.8}
-.btn-outline{flex:1;padding:11px;font-size:12px;border:0.5px solid #ddd;border-radius:12px;background:white;color:#1D9E75;cursor:pointer;text-align:center}
-.btn-outline-g{display:block;background:white;color:#1D9E75;border:0.5px solid #1D9E75;border-radius:14px;padding:12px;font-size:13px;cursor:pointer;margin-top:8px;width:100%;text-align:center}
+.btn{border:none;border-radius:var(--radius);padding:15px;font-size:14px;font-weight:700;width:100%;cursor:pointer;margin-top:10px;transition:opacity .15s,transform .1s;font-family:inherit}
+.btn:active{transform:scale(0.98);opacity:.9}
+.btn-amber{background:var(--amber);color:#1a1a1a}
+.btn-green{background:var(--green);color:white}
+.btn-outline{background:var(--surface);color:var(--green);border:0.5px solid var(--green);padding:12px;font-size:13px;font-weight:600;text-align:center;border-radius:var(--radius);cursor:pointer;display:block;width:100%;margin-top:8px;font-family:inherit}
+.btn-sm{flex:1;padding:11px;font-size:12px;border:0.5px solid var(--border2);border-radius:12px;background:var(--surface);color:var(--green);cursor:pointer;text-align:center;font-weight:600;font-family:inherit}
 
-/* ── CARDS & FORMS ── */
-.card{background:white;border:0.5px solid #e5e5e5;border-radius:16px;padding:14px;margin-bottom:10px}
-.card.featured{border:2px solid #1D9E75}
-.form-group{margin-bottom:12px}
-.form-label{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px;display:block}
-.form-input{background:white;border:0.5px solid #ddd;border-radius:12px;padding:12px 14px;font-size:14px;color:#1a1a1a;display:flex;align-items:center;gap:8px;cursor:pointer;width:100%}
-.form-input .ph{color:#aaa;font-size:13px}
-.form-row{display:flex;gap:8px}
-.form-row .form-group{flex:1}
+/* ── CARDS ── */
+.card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px;transition:border-color .2s,transform .15s}
+.card:active{transform:scale(0.99)}
+.card.featured{border:2px solid var(--green)}
+.card.tappable{cursor:pointer}
 
 /* ── HERO ── */
-.hero-card{background:#1a3a2a;border-radius:20px;padding:20px;margin-bottom:16px}
-.hero-loc{font-size:10px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
-.hero-title{font-size:22px;font-weight:700;color:white;line-height:1.2;margin-bottom:4px}
-.hero-accent{color:#F5A623}
-.hero-sub{font-size:12px;color:rgba(255,255,255,.55);margin-bottom:16px}
+.hero{background:var(--dark);border-radius:var(--radius-lg);padding:20px;margin-bottom:16px}
+.hero-loc{font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px}
+.hero-title{font-size:22px;font-weight:800;color:white;line-height:1.15;margin-bottom:4px}
+.hero-accent{color:var(--amber)}
+.hero-sub{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:16px}
 .hero-stats{display:flex;gap:24px}
-.stat-n{font-size:18px;font-weight:700;color:white}
-.stat-l{font-size:10px;color:rgba(255,255,255,.45)}
+.hs-n{font-size:18px;font-weight:800;color:white}
+.hs-l{font-size:10px;color:rgba(255,255,255,.4)}
 
 /* ── TABS ── */
 .tabs{display:flex;gap:6px;margin-bottom:16px}
-.tab{flex:1;padding:9px 4px;font-size:12px;text-align:center;border-radius:10px;cursor:pointer;border:0.5px solid #ddd;background:white;color:#666;font-weight:500}
-.tab.active{background:#1D9E75;color:white;border-color:#1D9E75}
+.tab{flex:1;padding:9px 4px;font-size:11px;text-align:center;border-radius:12px;cursor:pointer;border:0.5px solid var(--border);background:var(--surface);color:var(--text2);font-weight:600;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px}
+.tab.active{background:var(--green);color:white;border-color:var(--green)}
+
+/* ── FORM ── */
+.form-group{margin-bottom:12px}
+.form-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px;display:block;font-weight:700}
+.form-field{background:var(--surface);border:0.5px solid var(--border);border-radius:12px;padding:13px 14px;font-size:14px;color:var(--text);display:flex;align-items:center;gap:9px;cursor:pointer;width:100%;transition:border-color .2s,background .2s}
+.form-field:hover,.form-field.focus{border-color:var(--green)}
+.form-field .ph{color:var(--text3);font-size:13px}
+.form-field .val{color:var(--text);font-weight:500}
+.form-row{display:flex;gap:8px}
+.form-row .form-group{flex:1}
+.swap{width:38px;height:38px;background:var(--surface);border:0.5px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;align-self:center;margin-top:16px;font-size:17px;color:var(--green);flex-shrink:0;transition:background .2s,transform .3s}
+.swap:active{transform:rotate(180deg)}
+
+/* ── CITY PICKER MODAL ── */
+.modal-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:100;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .25s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal-sheet{background:var(--surface);border-radius:24px 24px 0 0;padding:0;width:100%;max-height:80%;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .3s ease}
+.modal-overlay.open .modal-sheet{transform:translateY(0)}
+.modal-header{padding:16px 18px 12px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.modal-title{font-size:16px;font-weight:700;color:var(--text)}
+.modal-close{font-size:20px;cursor:pointer;color:var(--text3);padding:2px 6px}
+.modal-search{padding:10px 16px;flex-shrink:0}
+.modal-search input{width:100%;background:var(--surface2);border:0.5px solid var(--border);border-radius:12px;padding:11px 14px;font-size:14px;color:var(--text);outline:none;font-family:inherit}
+.modal-search input::placeholder{color:var(--text3)}
+.modal-list{overflow-y:auto;padding:8px 0}
+.city-item{padding:13px 18px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:background .15s;border-bottom:0.5px solid var(--border)}
+.city-item:last-child{border:none}
+.city-item:active{background:var(--surface2)}
+.city-name{font-size:14px;font-weight:600;color:var(--text)}
+.city-region{font-size:11px;color:var(--text3)}
+.city-km{font-size:11px;color:var(--green);margin-left:auto;font-weight:600}
+
+/* ── DATE PICKER ── */
+.date-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;padding:12px 16px}
+.date-cell{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:10px;cursor:pointer;transition:background .15s}
+.date-cell:hover{background:var(--surface2)}
+.date-cell.sel{background:var(--green);color:white}
+.date-cell.today{border:1.5px solid var(--green)}
+.date-cell.past{opacity:.3;cursor:default}
+.date-num{font-size:14px;font-weight:700}
+.date-day{font-size:9px;font-weight:600;color:var(--text3);margin-bottom:2px}
+.date-cell.sel .date-day{color:rgba(255,255,255,.7)}
+.month-nav{display:flex;align-items:center;justify-content:space-between;padding:12px 18px 0;font-size:15px;font-weight:700;color:var(--text)}
+.month-btn{font-size:22px;cursor:pointer;color:var(--green);padding:0 8px;user-select:none}
+
+/* ── PASSENGERS ── */
+.pax-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:0.5px solid var(--border)}
+.pax-row:last-child{border:none}
+.pax-info .name{font-size:14px;font-weight:600;color:var(--text)}
+.pax-info .sub{font-size:11px;color:var(--text3)}
+.pax-ctrl{display:flex;align-items:center;gap:14px}
+.pax-btn{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--green);background:transparent;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;color:var(--green);user-select:none;transition:background .15s}
+.pax-btn:active{background:var(--green-light)}
+.pax-val{font-size:18px;font-weight:700;color:var(--text);min-width:24px;text-align:center}
 
 /* ── RESULTS ── */
 .filter-row{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
 .filter-row::-webkit-scrollbar{display:none}
-.pill{padding:6px 13px;border-radius:20px;font-size:11px;border:0.5px solid #ddd;background:white;color:#555;white-space:nowrap;cursor:pointer;font-weight:500}
-.pill.active{background:#1a3a2a;color:white;border-color:#1a3a2a}
-.company-name{font-size:14px;font-weight:600;color:#1a1a1a}
-.company-badge{font-size:10px;padding:2px 8px;border-radius:20px;background:#E1F5EE;color:#0F6E56;font-weight:500}
-.company-badge.vip{background:#FAEEDA;color:#854F0B}
-.big-price{font-size:22px;font-weight:700;color:#1D9E75}
-.price-unit{font-size:11px;color:#888}
+.pill{padding:7px 14px;border-radius:20px;font-size:11px;border:0.5px solid var(--border2);background:var(--surface);color:var(--text2);white-space:nowrap;cursor:pointer;font-weight:600;transition:all .2s}
+.pill.active{background:var(--dark);color:white;border-color:var(--dark)}
+.company-name{font-size:15px;font-weight:700;color:var(--text)}
+.badge{font-size:10px;padding:3px 9px;border-radius:20px;font-weight:700}
+.badge-green{background:var(--green-light);color:var(--green-text)}
+.badge-amber{background:var(--amber-light);color:var(--amber-text)}
+.big-price{font-size:24px;font-weight:800;color:var(--green)}
+.price-unit{font-size:11px;color:var(--text3)}
 .route-row{display:flex;align-items:center;gap:8px;margin:10px 0 8px}
-.big-time{font-size:18px;font-weight:700;color:#1a1a1a}
-.city-label{font-size:10px;color:#888}
-.dur{flex:1;text-align:center;font-size:10px;color:#aaa}
+.big-time{font-size:20px;font-weight:800;color:var(--text)}
+.city-lbl{font-size:10px;color:var(--text3)}
+.dur{flex:1;text-align:center;font-size:10px;color:var(--text3)}
 .tag-row{display:flex;gap:6px;flex-wrap:wrap}
-.tag{font-size:10px;padding:3px 9px;border-radius:20px;background:#f0f0ec;color:#555}
-.tag.green{background:#E1F5EE;color:#0F6E56}
+.tag{font-size:10px;padding:4px 10px;border-radius:20px;background:var(--surface2);color:var(--text2);font-weight:500}
+.tag.green{background:var(--green-light);color:var(--green-text)}
+.promo-banner{background:linear-gradient(135deg,var(--dark),#2d6a4f);border-radius:var(--radius);padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.promo-text{font-size:12px;color:rgba(255,255,255,.8);flex:1}
+.promo-val{font-size:18px;font-weight:800;color:var(--amber)}
 
 /* ── SEATS ── */
-.trip-summary{background:white;border-radius:12px;padding:11px 14px;margin-bottom:12px;border:0.5px solid #e5e5e5;display:flex;justify-content:space-between;align-items:center}
-.legend{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap}
-.leg-item{display:flex;align-items:center;gap:5px;font-size:10px;color:#666}
-.leg-dot{width:14px;height:14px;border-radius:4px;border:0.5px solid #ddd}
-.seat-wrap{background:white;border-radius:16px;padding:14px;margin-bottom:12px}
-.bus-front{text-align:center;font-size:11px;color:#888;margin-bottom:12px;padding-bottom:10px;border-bottom:0.5px dashed #ddd}
-.seat-grid{display:grid;grid-template-columns:1fr 18px 1fr;gap:6px}
+.seat-wrap{background:var(--surface);border-radius:var(--radius);padding:14px;margin-bottom:12px}
+.bus-front{text-align:center;font-size:11px;color:var(--text3);margin-bottom:12px;padding-bottom:10px;border-bottom:0.5px dashed var(--border)}
+.seat-grid{display:grid;grid-template-columns:1fr 16px 1fr;gap:5px}
 .seat-col{display:grid;grid-template-columns:1fr 1fr;gap:5px}
-.seat{aspect-ratio:1;border-radius:8px;border:0.5px solid #ddd;background:white;display:flex;align-items:center;justify-content:center;font-size:11px;color:#555;cursor:pointer;user-select:none}
-.seat.occ{background:#f0f0f0;color:#ccc;cursor:default;border-color:#e0e0e0}
-.seat.sel{background:#1D9E75;color:white;border-color:#1D9E75}
-.seat.vip{border-color:#F5A623;color:#854F0B}
+.seat{aspect-ratio:1;border-radius:8px;border:0.5px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .2s;user-select:none}
+.seat:active{transform:scale(0.9)}
+.seat.occ{background:var(--surface2);color:var(--text3);cursor:default;border-color:var(--border)}
+.seat.sel{background:var(--green);color:white;border-color:var(--green)}
+.seat.vip{border-color:var(--amber);color:var(--amber-text)}
+.seat.vip:hover{background:var(--amber-light)}
 
-/* ── BAGGAGE ── */
-.bag-card{background:white;border:0.5px solid #e5e5e5;border-radius:14px;padding:14px;margin-bottom:10px}
-.bag-head{display:flex;align-items:center;gap:10px}
-.bag-name{font-size:13px;font-weight:600}
-.bag-sub{font-size:11px;color:#888}
-.bag-price{font-size:14px;font-weight:700;color:#1D9E75;margin-left:auto;text-align:right}
-.counter{display:flex;align-items:center;gap:12px;margin-top:10px}
-.cnt-btn{width:30px;height:30px;border-radius:50%;border:0.5px solid #ddd;background:white;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#1D9E75;user-select:none}
-.cnt-btn:active{background:#E1F5EE}
-.cnt-val{font-size:17px;font-weight:600;min-width:24px;text-align:center}
-.recap{background:#f8f8f5;border-radius:12px;padding:12px;margin-top:6px}
-.recap-title{font-size:10px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
-.recap-row{display:flex;justify-content:space-between;font-size:12px;color:#555;margin-bottom:4px}
-.recap-total{display:flex;justify-content:space-between;font-size:15px;font-weight:700;color:#1a1a1a;margin-top:8px;padding-top:8px;border-top:0.5px solid #e0e0e0}
+/* ── PAX COUNTER ── */
+.counter{display:flex;align-items:center;gap:14px;margin-top:10px}
+.cnt-btn{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--green);background:transparent;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;color:var(--green);user-select:none}
+.cnt-btn:active{background:var(--green-light)}
+.cnt-val{font-size:18px;font-weight:700;min-width:24px;text-align:center;color:var(--text)}
 
 /* ── PAYMENT ── */
-.pay-opt{background:white;border:0.5px solid #e5e5e5;border-radius:14px;padding:13px 14px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:border-color .15s}
-.pay-opt.sel{border:2px solid #1D9E75}
-.pay-logo{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0}
+.pay-opt{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:border-color .2s}
+.pay-opt.sel{border:2px solid var(--green)}
+.pay-logo{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:white;flex-shrink:0}
 .pay-logo.om{background:#FF6600}.pay-logo.mm{background:#009900}.pay-logo.wv{background:#0066FF}.pay-logo.cb{background:#993300}
-.pay-name{font-size:13px;font-weight:600}
-.pay-sub{font-size:10px;color:#888}
-.radio{width:18px;height:18px;border-radius:50%;border:1.5px solid #ddd;display:flex;align-items:center;justify-content:center;margin-left:auto}
-.pay-opt.sel .radio{border-color:#1D9E75}
-.radio-dot{width:10px;height:10px;border-radius:50%;background:#1D9E75;display:none}
+.pay-name{font-size:13px;font-weight:700;color:var(--text)}
+.pay-sub{font-size:10px;color:var(--text3)}
+.radio{width:20px;height:20px;border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;margin-left:auto;transition:border-color .2s}
+.pay-opt.sel .radio{border-color:var(--green)}
+.radio-dot{width:11px;height:11px;border-radius:50%;background:var(--green);display:none}
 .pay-opt.sel .radio-dot{display:block}
-.order-box{background:#f8f8f5;border-radius:12px;padding:13px;margin-bottom:14px}
-.order-head{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
-.order-row{display:flex;justify-content:space-between;font-size:12px;color:#555;margin-bottom:4px}
-.order-total{display:flex;justify-content:space-between;font-size:16px;font-weight:700;color:#1a1a1a;margin-top:8px;padding-top:8px;border-top:0.5px solid #e0e0e0}
+.order-box{background:var(--surface2);border-radius:var(--radius);padding:14px;margin-bottom:14px;border:0.5px solid var(--border)}
+.order-head{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.order-row{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:5px}
+.order-total{display:flex;justify-content:space-between;font-size:16px;font-weight:800;color:var(--text);margin-top:8px;padding-top:8px;border-top:0.5px solid var(--border)}
 
 /* ── OTP ── */
-.otp-center{text-align:center;padding:20px 16px 14px}
-.op-badge{display:inline-flex;align-items:center;gap:8px;background:#fff3e8;border-radius:12px;padding:8px 16px;margin-bottom:14px}
-.op-dot{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white}
-.otp-title{font-size:17px;font-weight:700;color:#1a1a1a;margin-bottom:4px}
-.otp-sub{font-size:12px;color:#888;margin-bottom:12px}
-.otp-phone{background:#f0f0ec;border-radius:10px;padding:9px 14px;text-align:center;font-size:13px;color:#555;margin-bottom:12px}
-.otp-amount{background:#E1F5EE;border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;font-size:13px;margin-bottom:12px}
-.otp-amount .lbl{color:#0F6E56}.otp-amount .val{font-weight:700;color:#085041}
-.otp-boxes{display:flex;gap:10px;justify-content:center;margin-bottom:10px}
-.otp-box{width:48px;height:54px;border:2px solid #ddd;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#1a1a1a;background:white}
-.otp-box.filled{border-color:#1D9E75;background:#f0faf6}
-.otp-box.cur{border-color:#F5A623}
-.otp-resend{font-size:12px;color:#1D9E75;cursor:pointer;margin-bottom:14px}
-.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 12px}
-.key{background:white;border:0.5px solid #e0e0e0;border-radius:13px;padding:14px;text-align:center;font-size:18px;font-weight:600;cursor:pointer;color:#1a1a1a;user-select:none;transition:background .1s}
-.key:active{background:#f0f0ec}
-.key.del{font-size:14px;color:#888}
-.key.ok{background:#1D9E75;color:white;border-color:#1D9E75;font-size:14px}
-.key.ok:active{background:#0F6E56}
-.proc-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px}
-.spinner{width:46px;height:46px;border:3px solid #e0e0e0;border-top-color:#1D9E75;border-radius:50%;animation:spin .8s linear infinite;margin-bottom:16px}
+.otp-center{text-align:center;padding:20px 16px 16px}
+.op-badge{display:inline-flex;align-items:center;gap:8px;background:var(--amber-light);border-radius:12px;padding:8px 16px;margin-bottom:14px}
+.op-dot{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:white}
+.otp-title{font-size:17px;font-weight:800;color:var(--text);margin-bottom:4px}
+.otp-sub{font-size:12px;color:var(--text3);margin-bottom:12px}
+.otp-phone{background:var(--surface2);border-radius:10px;padding:9px 14px;text-align:center;font-size:13px;color:var(--text2);margin-bottom:12px}
+.otp-amount{background:var(--green-light);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;font-size:13px;margin-bottom:14px}
+.otp-amount .lbl{color:var(--green-text);font-weight:600}
+.otp-amount .val{font-weight:800;color:var(--green-text)}
+.otp-boxes{display:flex;gap:10px;justify-content:center;margin-bottom:12px}
+.otp-box{width:52px;height:58px;border:2px solid var(--border2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:var(--text);background:var(--surface);transition:border-color .2s}
+.otp-box.filled{border-color:var(--green);background:var(--green-light)}
+.otp-box.cur{border-color:var(--amber)}
+.otp-resend{font-size:12px;color:var(--green);cursor:pointer;margin-bottom:14px;font-weight:600}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 10px}
+.key{background:var(--surface);border:0.5px solid var(--border);border-radius:14px;padding:15px;text-align:center;font-size:20px;font-weight:700;cursor:pointer;color:var(--text);user-select:none;transition:background .1s}
+.key:active{background:var(--surface2)}
+.key.del{font-size:14px;color:var(--text3)}
+.key.ok{background:var(--green);color:white;border-color:var(--green);font-size:14px}
+.key.ok:active{background:var(--green-dark)}
+.spinner{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:18px}
 @keyframes spin{to{transform:rotate(360deg)}}
-.proc-title{font-size:16px;font-weight:600;color:#1a1a1a;margin-bottom:6px}
-.proc-sub{font-size:12px;color:#888;text-align:center}
 
 /* ── TICKET ── */
-.ticket{background:white;border-radius:20px;overflow:hidden;border:0.5px solid #e5e5e5;margin-bottom:14px}
-.ticket-top{background:#1a3a2a;padding:18px;text-align:center}
-.ticket-brand{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:2px}
-.ticket-route{font-size:22px;font-weight:700;color:white}
-.ticket-meta{font-size:11px;color:rgba(255,255,255,.45);margin-top:4px}
-.ticket-body{padding:16px}
-.ticket-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;padding-bottom:16px;border-bottom:0.5px dashed #e0e0e0}
-.tf-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:#888;margin-bottom:2px}
-.tf-val{font-size:14px;font-weight:700;color:#1a1a1a}
-.qr-area{text-align:center;padding:10px 0}
-.qr-frame{width:104px;height:104px;background:white;border:0.5px solid #e0e0e0;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;overflow:hidden}
-.qr-code{font-size:11px;font-weight:700;color:#333;margin-top:8px;letter-spacing:1px}
-.qr-hint{font-size:10px;color:#888;margin-top:2px}
-.success-wrap{text-align:center;padding:24px 20px 16px}
-.ok-icon{width:60px;height:60px;background:#E1F5EE;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:26px}
-.ok-title{font-size:18px;font-weight:700;margin-bottom:4px}
-.ok-sub{font-size:13px;color:#888;margin-bottom:14px}
-.ok-ref{font-size:11px;background:#f0f0f0;padding:6px 16px;border-radius:20px;color:#555;display:inline-block;margin-bottom:14px}
+.ticket{background:var(--surface);border-radius:var(--radius-lg);overflow:hidden;border:0.5px solid var(--border);margin-bottom:14px;box-shadow:var(--shadow)}
+.ticket-top{background:var(--dark);padding:20px;text-align:center}
+.ticket-brand{font-size:12px;color:rgba(255,255,255,.45);margin-bottom:2px;font-weight:700;letter-spacing:.5px}
+.ticket-route{font-size:24px;font-weight:800;color:white}
+.ticket-meta{font-size:11px;color:rgba(255,255,255,.4);margin-top:4px}
+.ticket-body{padding:18px}
+.ticket-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;padding-bottom:16px;border-bottom:0.5px dashed var(--border)}
+.tf-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:3px;font-weight:700}
+.tf-val{font-size:15px;font-weight:800;color:var(--text)}
+.qr-area{text-align:center;padding:12px 0}
+.qr-hint-top{font-size:10px;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;font-weight:700}
+.qr-frame{width:110px;height:110px;background:white;border:0.5px solid var(--border);border-radius:10px;display:inline-flex;align-items:center;justify-content:center;overflow:hidden;padding:4px}
+.qr-code{font-size:11px;font-weight:800;color:var(--text);margin-top:8px;letter-spacing:1.5px}
+.qr-hint{font-size:10px;color:var(--text3);margin-top:3px}
 
 /* ── COLIS TRACKING ── */
-.track-card{background:white;border:0.5px solid #e5e5e5;border-radius:16px;overflow:hidden;margin-bottom:12px}
-.track-top{background:#1a3a2a;padding:14px 16px}
-.track-ref{font-size:11px;color:rgba(255,255,255,.5);margin-bottom:2px}
-.track-route{font-size:15px;font-weight:700;color:white}
-.track-badge{display:inline-block;background:#F5A623;color:#1a1a1a;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;margin-top:6px}
-.track-badge.done{background:#1D9E75;color:white}
+.track-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:12px}
+.track-top{background:var(--dark);padding:16px}
+.track-ref{font-size:11px;color:rgba(255,255,255,.45);margin-bottom:3px;font-weight:600}
+.track-route{font-size:16px;font-weight:800;color:white}
+.track-badge{display:inline-block;background:var(--amber);color:#1a1a1a;font-size:10px;font-weight:800;padding:4px 12px;border-radius:20px;margin-top:8px}
+.track-badge.done{background:var(--green);color:white}
 .track-body{padding:14px}
-.colis-meta{background:#f8f8f5;border-radius:10px;padding:10px 12px;margin-bottom:12px}
-.meta-row{display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px}
-.meta-row .k{color:#888}.meta-row .v{font-weight:600;color:#1a1a1a}
-.timeline{position:relative;padding-left:26px}
-.timeline::before{content:'';position:absolute;left:9px;top:8px;bottom:8px;width:1.5px;background:#e0e0e0}
-.tl-item{position:relative;margin-bottom:16px}
+.colis-meta{background:var(--surface2);border-radius:10px;padding:11px 13px;margin-bottom:14px}
+.meta-row{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px}
+.meta-row:last-child{margin-bottom:0}
+.meta-row .k{color:var(--text3);font-weight:500}.meta-row .v{font-weight:700;color:var(--text)}
+.tl{position:relative;padding-left:28px}
+.tl::before{content:'';position:absolute;left:9px;top:8px;bottom:8px;width:2px;background:var(--border)}
+.tl-item{position:relative;margin-bottom:18px}
 .tl-item:last-child{margin-bottom:0}
-.tl-dot{position:absolute;left:-26px;top:3px;width:17px;height:17px;border-radius:50%;border:2px solid #ddd;background:white;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700}
-.tl-dot.done{background:#1D9E75;border-color:#1D9E75;color:white}
-.tl-dot.active{background:#F5A623;border-color:#F5A623;color:#1a1a1a}
-.tl-title{font-size:12px;font-weight:600;color:#1a1a1a}
-.tl-sub{font-size:10px;color:#888;margin-top:1px}
-.tl-time{font-size:10px;color:#1D9E75;margin-top:1px}
-.notif-card{background:white;border:0.5px solid #e5e5e5;border-radius:12px;padding:10px 12px;margin-bottom:8px;display:flex;gap:10px;align-items:flex-start}
-.notif-title{font-size:12px;font-weight:600;color:#1a1a1a}
-.notif-sub{font-size:11px;color:#888;margin-top:1px}
-.notif-time{font-size:10px;color:#aaa;margin-top:2px}
+.tl-dot{position:absolute;left:-28px;top:2px;width:18px;height:18px;border-radius:50%;border:2px solid var(--border2);background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;transition:all .4s}
+.tl-dot.done{background:var(--green);border-color:var(--green);color:white}
+.tl-dot.active{background:var(--amber);border-color:var(--amber);color:#1a1a1a}
+.tl-title{font-size:13px;font-weight:700;color:var(--text)}
+.tl-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.tl-time{font-size:10px;color:var(--green);margin-top:2px;font-weight:600}
+.notif-card{background:var(--surface);border:0.5px solid var(--border);border-radius:12px;padding:12px;margin-bottom:8px;display:flex;gap:10px;align-items:flex-start;transition:opacity .4s}
+.notif-title{font-size:12px;font-weight:700;color:var(--text)}
+.notif-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.notif-time{font-size:10px;color:var(--text3);margin-top:3px;font-weight:600}
+
+/* ── PUSH NOTIFICATION ── */
+.push-notif{position:absolute;top:60px;left:12px;right:12px;background:var(--surface);border-radius:14px;padding:12px 14px;border:0.5px solid var(--border);box-shadow:var(--shadow);z-index:200;display:flex;gap:10px;align-items:flex-start;transform:translateY(-80px);opacity:0;transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .3s;pointer-events:none}
+.push-notif.show{transform:translateY(0);opacity:1;pointer-events:all}
+.push-app{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px}
+.push-title{font-size:13px;font-weight:700;color:var(--text)}
+.push-sub{font-size:11px;color:var(--text3);margin-top:1px}
+.push-time{font-size:10px;color:var(--text3);margin-left:auto;flex-shrink:0}
 
 /* ── DASHBOARD ── */
 .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
-.kpi{background:white;border-radius:14px;padding:12px;border:0.5px solid #e5e5e5}
-.kpi-icon{font-size:18px;margin-bottom:6px}
-.kpi-val{font-size:21px;font-weight:700;color:#1a1a1a}
-.kpi-lbl{font-size:10px;color:#888;margin-bottom:2px}
-.kpi-chg{font-size:10px;color:#1D9E75}
-.kpi-chg.neg{color:#E24B4A}
-.chart-box{background:white;border-radius:14px;padding:12px;border:0.5px solid #e5e5e5;margin-bottom:10px}
-.chart-lbl{font-size:11px;color:#888;margin-bottom:10px}
-.bar-chart{display:flex;align-items:flex-end;gap:6px;height:64px}
-.bw{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
-.b{width:100%;background:#E1F5EE;border-radius:4px 4px 0 0}
-.b.today{background:#1D9E75}
-.b-day{font-size:9px;color:#aaa}
-.nav-seg{background:#f8f8f5;padding:4px;border-radius:12px;display:flex;margin-bottom:14px}
-.seg-tab{flex:1;padding:7px 8px;font-size:11px;text-align:center;border-radius:8px;cursor:pointer;color:#888;font-weight:500}
-.seg-tab.active{background:white;color:#1D9E75;font-weight:700}
-.list-card{background:white;border-radius:14px;padding:12px;border:0.5px solid #e5e5e5}
-.list-title{font-size:12px;font-weight:600;color:#888;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
-.list-add{color:#1D9E75;cursor:pointer;font-size:14px}
-.list-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid #f0f0f0}
-.list-item:last-child{border-bottom:none}
-.list-route{font-size:12px;font-weight:600}
-.list-time{font-size:10px;color:#888}
-.status-badge{margin-left:auto;font-size:10px;padding:3px 9px;border-radius:20px;font-weight:500}
-.enroute{background:#E1F5EE;color:#0F6E56}
-.quai{background:#FAEEDA;color:#854F0B}
-.ouvert{background:#E6F1FB;color:#185FA5}
-.retard{background:#FCEBEB;color:#A32D2D}
+.kpi{background:var(--surface);border-radius:var(--radius);padding:14px;border:0.5px solid var(--border)}
+.kpi-icon{font-size:20px;margin-bottom:6px}
+.kpi-val{font-size:22px;font-weight:800;color:var(--text)}
+.kpi-lbl{font-size:10px;color:var(--text3);margin-bottom:2px;font-weight:600}
+.kpi-chg{font-size:10px;color:var(--green);font-weight:700}
+.kpi-chg.neg{color:var(--red)}
+.chart-box{background:var(--surface);border-radius:var(--radius);padding:14px;border:0.5px solid var(--border);margin-bottom:10px}
+.chart-lbl{font-size:11px;color:var(--text3);margin-bottom:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.bar-chart{display:flex;align-items:flex-end;gap:5px;height:68px}
+.bw{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.b{width:100%;background:var(--green-light);border-radius:5px 5px 0 0;transition:height .5s ease}
+.b.today{background:var(--green)}
+.b-day{font-size:9px;color:var(--text3);font-weight:600}
+.nav-seg{background:var(--surface2);padding:4px;border-radius:12px;display:flex;margin-bottom:14px}
+.seg-tab{flex:1;padding:8px;font-size:11px;text-align:center;border-radius:9px;cursor:pointer;color:var(--text3);font-weight:700;transition:all .2s}
+.seg-tab.active{background:var(--surface);color:var(--green)}
+.list-card{background:var(--surface);border-radius:var(--radius);padding:14px;border:0.5px solid var(--border)}
+.list-title{font-size:12px;font-weight:700;color:var(--text3);margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.list-add{color:var(--green);cursor:pointer;font-size:15px}
+.list-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:0.5px solid var(--border)}
+.list-item:last-child{border:none}
+.list-route{font-size:12px;font-weight:700;color:var(--text)}
+.list-time{font-size:10px;color:var(--text3)}
+.sbadge{margin-left:auto;font-size:10px;padding:3px 10px;border-radius:20px;font-weight:700}
+.enroute{background:var(--green-light);color:var(--green-text)}
+.quai{background:var(--amber-light);color:var(--amber-text)}
+.ouvert{background:var(--blue-light);color:var(--blue-text)}
+.retard{background:var(--red-light);color:var(--red)}
+
+/* ── PROFIL ── */
+.profile-header{background:var(--dark);padding:28px 20px 20px;text-align:center}
+.avatar{width:70px;height:70px;border-radius:50%;background:var(--amber);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:#1a1a1a;margin:0 auto 12px}
+.profile-name{font-size:18px;font-weight:800;color:white}
+.profile-tel{font-size:13px;color:rgba(255,255,255,.5);margin-top:4px}
+.profile-badge{display:inline-block;background:rgba(255,255,255,.1);color:var(--amber);font-size:11px;font-weight:700;padding:4px 14px;border-radius:20px;margin-top:8px}
+.stats-row{display:flex;gap:1px;margin-top:16px}
+.stat-box{flex:1;background:rgba(255,255,255,.08);padding:12px 8px;text-align:center}
+.stat-box:first-child{border-radius:12px 0 0 12px}
+.stat-box:last-child{border-radius:0 12px 12px 0}
+.stat-n{font-size:18px;font-weight:800;color:white}
+.stat-l{font-size:10px;color:rgba(255,255,255,.45);margin-top:2px}
+.menu-item{display:flex;align-items:center;gap:12px;padding:14px 4px;border-bottom:0.5px solid var(--border);cursor:pointer}
+.menu-item:last-child{border:none}
+.menu-icon{width:36px;height:36px;border-radius:10px;background:var(--surface2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.menu-icon .ico,.menu-icon .ico-sm{width:18px;height:18px}
+.menu-label{font-size:14px;font-weight:600;color:var(--text)}
+.menu-arrow{margin-left:auto;color:var(--text3);font-size:18px}
+.dark-toggle{display:flex;align-items:center;gap:12px;padding:14px 4px;cursor:pointer}
+.toggle-track{width:44px;height:26px;background:var(--border2);border-radius:13px;position:relative;transition:background .3s;flex-shrink:0}
+.toggle-track.on{background:var(--green)}
+.toggle-thumb{width:20px;height:20px;background:white;border-radius:50%;position:absolute;top:3px;left:3px;transition:transform .3s;box-shadow:0 1px 4px rgba(0,0,0,0.2)}
+.toggle-track.on .toggle-thumb{transform:translateX(18px)}
 
 /* ── ONBOARDING ── */
-.onb-top{background:#1a3a2a;padding:28px 20px 24px;text-align:center}
-.onb-logo{font-size:28px;font-weight:800;color:white;letter-spacing:-0.5px}
-.onb-logo span{color:#F5A623}
-.onb-tag{font-size:13px;color:rgba(255,255,255,.55);margin-bottom:22px;margin-top:4px}
-.onb-stats{display:flex;gap:10px;justify-content:center}
-.onb-stat{background:rgba(255,255,255,.1);border-radius:12px;padding:10px 14px;text-align:center;min-width:74px}
-.onb-stat .n{font-size:20px;font-weight:800;color:#F5A623}
-.onb-stat .l{font-size:10px;color:rgba(255,255,255,.5);margin-top:2px}
-.market-card{background:white;border:0.5px solid #e5e5e5;border-radius:14px;padding:14px;margin-bottom:10px}
-.market-title{font-size:12px;font-weight:600;color:#1a1a1a;margin-bottom:10px}
-.bar-wrap{margin-bottom:8px}
-.bar-meta{display:flex;justify-content:space-between;margin-bottom:4px}
-.bar-meta .name{font-size:11px;font-weight:600;color:#1a1a1a}
-.bar-meta .val{font-size:11px;font-weight:700}
-.bar-track{background:#f0f0ec;border-radius:20px;height:7px;overflow:hidden}
+.onb-top{background:var(--dark);padding:28px 20px 24px;text-align:center}
+.onb-logo{font-size:30px;font-weight:800;color:white;letter-spacing:-1px}
+.onb-logo span{color:var(--amber)}
+.onb-tag{font-size:13px;color:rgba(255,255,255,.5);margin:4px 0 20px;font-weight:500}
+.onb-stats-row{display:flex;gap:8px;justify-content:center}
+.onb-stat{background:rgba(255,255,255,.1);border-radius:12px;padding:10px 12px;text-align:center;min-width:72px}
+.onb-stat .n{font-size:20px;font-weight:800;color:var(--amber)}
+.onb-stat .l{font-size:10px;color:rgba(255,255,255,.45);margin-top:2px}
+.mkt-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px}
+.mkt-title{font-size:12px;font-weight:800;color:var(--text);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px}
+.bar-wrap-onb{margin-bottom:10px}
+.bar-meta{display:flex;justify-content:space-between;margin-bottom:5px}
+.bar-meta .nm{font-size:12px;font-weight:600;color:var(--text)}
+.bar-meta .vl{font-size:12px;font-weight:800}
+.bar-track{background:var(--surface2);border-radius:20px;height:7px;overflow:hidden}
 .bar-fill{height:100%;border-radius:20px}
-.pain{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:0.5px solid #f5f5f5}
+.pain{display:flex;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--border)}
 .pain:last-child{border:none}
-.pain-title{font-size:12px;font-weight:600;color:#1a1a1a;margin-bottom:2px}
-.pain-text{font-size:11px;color:#666}
-.eco-row{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:0.5px solid #f5f5f5}
-.eco-row:last-child{border:none}
-.eco-row .k{color:#666}.eco-row .v{font-weight:600;color:#1a1a1a}
+.pain-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px}
+.pain-text{font-size:11px;color:var(--text3);line-height:1.4}
+.proj-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:0.5px solid var(--border)}
+.proj-row:last-child{border:none}
+.proj-year{font-size:12px;font-weight:700;color:var(--text2);width:36px}
+.proj-bar-wrap{flex:1;background:var(--surface2);border-radius:20px;height:8px;overflow:hidden}
+.proj-bar{height:100%;border-radius:20px;background:var(--green);transition:width .8s ease}
+.proj-val{font-size:12px;font-weight:800;color:var(--green);width:56px;text-align:right}
 
 /* ── SIDEBAR ── */
-.sidebar-card{background:white;border:0.5px solid #e5e5e5;border-radius:14px;padding:16px;margin-bottom:12px}
-.sidebar-card h3{font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:10px}
-.nav-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;cursor:pointer;font-size:12px;color:#555;border:none;background:transparent;width:100%;text-align:left;font-family:inherit}
-.nav-link:hover{background:#f5f5f0}
-.nav-link.active{background:#E1F5EE;color:#085041;font-weight:600}
-.nav-dot{width:8px;height:8px;border-radius:50%;background:#ddd;flex-shrink:0}
-.nav-link.active .nav-dot{background:#1D9E75}
-.s-row{display:flex;justify-content:space-between;margin-bottom:5px;font-size:12px}
-.s-row .k{color:#888}.s-row .v{font-weight:600;color:#1a1a1a}
-.pill-g{display:inline-block;background:#E1F5EE;color:#085041;font-size:10px;padding:3px 10px;border-radius:20px;margin-top:6px;font-weight:600}
-.tam-r{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.tam-c{border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.tam-n{font-size:12px;font-weight:700;color:#1a1a1a}
-.tam-l{font-size:11px;color:#888}
+.sc{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
+.sc h3{font-size:13px;font-weight:800;color:var(--text);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.nav-link{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:9px;cursor:pointer;font-size:12px;color:var(--text2);border:none;background:transparent;width:100%;text-align:left;font-family:inherit;font-weight:500;transition:background .15s}
+.nav-link:hover{background:var(--surface2)}
+.nav-link.active{background:var(--green-light);color:var(--green-text);font-weight:700}
+.nav-dot{width:8px;height:8px;border-radius:50%;background:var(--border2);flex-shrink:0}
+.nav-link.active .nav-dot{background:var(--green)}
+.s-row{display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px}
+.s-row .k{color:var(--text3);font-weight:500}.s-row .v{font-weight:700;color:var(--text)}
+.pill-g{display:inline-block;background:var(--green-light);color:var(--green-text);font-size:10px;padding:3px 10px;border-radius:20px;margin-top:6px;font-weight:700}
+.tam-r{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.tam-c{border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;font-weight:800}
+.dark-sidebar-btn{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:9px;cursor:pointer;font-size:12px;color:var(--text2);width:100%;font-weight:600;transition:background .15s;border:0.5px solid var(--border);background:var(--surface);margin-top:8px;font-family:inherit}
+.dark-sidebar-btn:hover{background:var(--surface2)}
+
+
+/* ── ICONS ── */
+.tab .ico{width:15px;height:15px}
+.ico{width:22px;height:22px;display:inline-block;vertical-align:middle;flex-shrink:0}
+.ico-sm{width:16px;height:16px;display:inline-block;vertical-align:middle;flex-shrink:0}
+.bnav-icon{width:24px;height:24px;display:flex;align-items:center;justify-content:center}
+.bnav-icon .ico{width:24px;height:24px}
+.ico-btn{width:20px;height:20px}
 
 /* ── UTILS ── */
-.section-lbl{font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;margin-top:4px}
-.info-banner{background:#E1F5EE;border-radius:10px;padding:10px 12px;font-size:12px;color:#0F6E56;margin-bottom:14px;font-weight:500}
-.swap-btn{width:38px;height:38px;background:white;border:0.5px solid #ddd;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;align-self:center;margin-top:16px;font-size:17px;color:#1D9E75;flex-shrink:0;user-select:none}
+.section-lbl{font-size:10px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;margin-top:4px}
+.info-banner{background:var(--green-light);border-radius:10px;padding:11px 13px;font-size:12px;color:var(--green-text);margin-bottom:14px;font-weight:600}
+.trip-summary{background:var(--surface);border-radius:12px;padding:12px 14px;margin-bottom:12px;border:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.legend{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);font-weight:600}
+.leg-dot{width:14px;height:14px;border-radius:4px;border:0.5px solid var(--border)}
+.success-wrap{text-align:center;padding:24px 20px 16px}
+.ok-icon{width:64px;height:64px;background:var(--green-light);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:28px}
+.ok-title{font-size:19px;font-weight:800;margin-bottom:4px;color:var(--text)}
+.ok-sub{font-size:13px;color:var(--text3);margin-bottom:14px}
+.ok-ref{font-size:11px;background:var(--surface2);padding:6px 16px;border-radius:20px;color:var(--text2);display:inline-block;margin-bottom:14px;font-weight:700;border:0.5px solid var(--border)}
+.proc-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px}
+.proc-title{font-size:16px;font-weight:800;color:var(--text);margin-bottom:6px}
+.proc-sub{font-size:12px;color:var(--text3);text-align:center;line-height:1.5}
 </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════
-     DESKTOP LAYOUT
-══════════════════════════════════════════ -->
-<div class="desktop-shell">
+<!-- DESKTOP -->
+<div class="desktop-wrap">
   <div class="phone-frame">
-    <div class="phone-inner" id="app-desktop">
-      <div class="status-bar"><span>9:41</span><span>▲ WiFi ◼</span></div>
-      <!-- screens injected by JS -->
+    <div class="phone-inner" id="app-d">
+      <div class="statusbar"><span>9:41</span><span>▲ WiFi ◼</span></div>
     </div>
   </div>
   <div class="sidebar">
-    <div class="sidebar-card">
-      <h3>Navigation prototype</h3>
-      <button class="nav-link" id="lnk-s-onboard" onclick="go('s-onboard')"><span class="nav-dot"></span>0. Pitch investisseurs</button>
-      <button class="nav-link active" id="lnk-s-home" onclick="go('s-home')"><span class="nav-dot"></span>1. Accueil &amp; Recherche</button>
-      <button class="nav-link" id="lnk-s-results" onclick="go('s-results')"><span class="nav-dot"></span>2. Résultats de trajet</button>
-      <button class="nav-link" id="lnk-s-seats" onclick="go('s-seats')"><span class="nav-dot"></span>3. Sélection de siège</button>
-      <button class="nav-link" id="lnk-s-baggage" onclick="go('s-baggage')"><span class="nav-dot"></span>4. Déclaration bagages</button>
-      <button class="nav-link" id="lnk-s-payment" onclick="go('s-payment')"><span class="nav-dot"></span>5. Paiement mobile</button>
+    <div class="sc">
+      <h3>Navigation</h3>
+      <button class="nav-link" id="lnk-s-pitch" onclick="go('s-pitch')"><span class="nav-dot"></span>0. Pitch investisseurs</button>
+      <button class="nav-link active" id="lnk-s-home" onclick="go('s-home')"><span class="nav-dot"></span>1. Accueil</button>
+      <button class="nav-link" id="lnk-s-results" onclick="go('s-results')"><span class="nav-dot"></span>2. Résultats</button>
+      <button class="nav-link" id="lnk-s-seats" onclick="go('s-seats')"><span class="nav-dot"></span>3. Sélection siège</button>
+      <button class="nav-link" id="lnk-s-baggage" onclick="go('s-baggage')"><span class="nav-dot"></span>4. Bagages</button>
+      <button class="nav-link" id="lnk-s-payment" onclick="go('s-payment')"><span class="nav-dot"></span>5. Paiement</button>
       <button class="nav-link" id="lnk-s-otp" onclick="go('s-otp')"><span class="nav-dot"></span>6. Validation OTP ✦</button>
-      <button class="nav-link" id="lnk-s-success" onclick="go('s-success')"><span class="nav-dot"></span>7. E-Ticket / QR Code</button>
+      <button class="nav-link" id="lnk-s-success" onclick="go('s-success')"><span class="nav-dot"></span>7. E-Ticket QR</button>
       <button class="nav-link" id="lnk-s-colis" onclick="go('s-colis')"><span class="nav-dot"></span>8. Traçabilité colis ✦</button>
-      <button class="nav-link" id="lnk-s-dash" onclick="go('s-dash')"><span class="nav-dot"></span>9. Back-office Admin</button>
+      <button class="nav-link" id="lnk-s-dash" onclick="go('s-dash')"><span class="nav-dot"></span>9. Back-office</button>
+      <button class="nav-link" id="lnk-s-profile" onclick="go('s-profile')"><span class="nav-dot"></span>10. Profil utilisateur ✦</button>
+      <button class="dark-sidebar-btn" onclick="toggleDark()" style="display:flex;align-items:center;gap:8px"><span style="display:flex;color:var(--text2)"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span> Mode sombre</button>
     </div>
-    <div class="sidebar-card">
-      <h3>Marché (TAM / SAM / SOM)</h3>
-      <div class="tam-r"><div class="tam-c" style="width:38px;height:38px;background:#1a3a2a"><span style="font-size:9px;color:white;font-weight:700;text-align:center;line-height:1.1">TAM</span></div><div><div class="tam-n">12 Mrd FCFA</div><div class="tam-l">Marché total transport BF</div></div></div>
-      <div class="tam-r"><div class="tam-c" style="width:30px;height:30px;background:#1D9E75;margin-left:4px"><span style="font-size:9px;color:white;font-weight:700">SAM</span></div><div><div class="tam-n">3,6 Mrd FCFA</div><div class="tam-l">Compagnies digitalisables</div></div></div>
-      <div class="tam-r"><div class="tam-c" style="width:24px;height:24px;background:#F5A623;margin-left:7px"><span style="font-size:8px;color:#1a1a1a;font-weight:700">SOM</span></div><div><div class="tam-n">360 M FCFA</div><div class="tam-l">Objectif année 1</div></div></div>
+    <div class="sc">
+      <h3>Marché BF</h3>
+      <div class="tam-r"><div class="tam-c" style="width:38px;height:38px;background:#1a3a2a;color:white">TAM</div><div><div style="font-size:12px;font-weight:800;color:var(--text)">12 Mrd FCFA</div><div style="font-size:11px;color:var(--text3)">Marché total</div></div></div>
+      <div class="tam-r"><div class="tam-c" style="width:30px;height:30px;background:#1D9E75;color:white;margin-left:4px">SAM</div><div><div style="font-size:12px;font-weight:800;color:var(--text)">3,6 Mrd FCFA</div><div style="font-size:11px;color:var(--text3)">Digitalisable</div></div></div>
+      <div class="tam-r"><div class="tam-c" style="width:24px;height:24px;background:#F5A623;color:#1a1a1a;font-size:8px;margin-left:7px">SOM</div><div><div style="font-size:12px;font-weight:800;color:var(--text)">360 M FCFA</div><div style="font-size:11px;color:var(--text3)">Objectif Y1</div></div></div>
     </div>
-    <div class="sidebar-card">
-      <h3>Stack technique</h3>
+    <div class="sc">
+      <h3>Stack</h3>
       <div class="s-row"><span class="k">Mobile</span><span class="v">React Native</span></div>
       <div class="s-row"><span class="k">Web</span><span class="v">Next.js</span></div>
-      <div class="s-row"><span class="k">Paiement</span><span class="v">CinetPay API</span></div>
-      <div class="s-row"><span class="k">Traçabilité</span><span class="v">QR + Firebase</span></div>
-      <div class="s-row"><span class="k">OTP</span><span class="v">SMS Gateway</span></div>
-      <span class="pill-g">Marché 0% digitalisé</span>
+      <div class="s-row"><span class="k">Paiement</span><span class="v">CinetPay</span></div>
+      <div class="s-row"><span class="k">Tracking</span><span class="v">QR + Firebase</span></div>
+      <span class="pill-g">0% du marché digitalisé</span>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     MOBILE LAYOUT
-══════════════════════════════════════════ -->
-<div class="mobile-shell">
-  <div class="phone-inner" id="app-mobile"></div>
+<!-- MOBILE -->
+<div class="mobile-wrap"><div class="phone-inner" id="app-m"></div></div>
+
+<template id="tpl">
+
+<!-- PUSH NOTIFICATION (overlay) -->
+<div class="push-notif" id="push-notif">
+  <span style="font-size:24px" id="push-icon">🚌</span>
+  <div style="flex:1">
+    <div class="push-app">MonBillet.bf</div>
+    <div class="push-title" id="push-title">Votre bus part dans 30 min !</div>
+    <div class="push-sub" id="push-sub">Rahimo R-07 · Ouaga → Bobo</div>
+  </div>
+  <div class="push-time">À l'instant</div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     SCREENS TEMPLATE
-══════════════════════════════════════════ -->
-<template id="screens-tpl">
-
 <!-- S0: PITCH -->
-<div class="screen" id="s-onboard">
+<div class="screen" id="s-pitch">
   <div class="onb-top">
     <div class="onb-logo">Mon<span>Billet</span>.bf</div>
-    <div class="onb-tag">La billetterie bus du Burkina Faso</div>
-    <div class="onb-stats">
+    <div class="onb-tag">La billetterie numérique du Burkina Faso</div>
+    <div class="onb-stats-row">
       <div class="onb-stat"><div class="n">5M+</div><div class="l">Voyageurs/an</div></div>
       <div class="onb-stat"><div class="n">0%</div><div class="l">Digitalisé</div></div>
       <div class="onb-stat"><div class="n">5</div><div class="l">Compagnies</div></div>
     </div>
   </div>
-  <div class="scroll-area">
-    <div class="market-card">
-      <div class="market-title">📊 Taille du marché (FCFA)</div>
-      <div class="bar-wrap"><div class="bar-meta"><span class="name">TAM — Marché total</span><span class="val" style="color:#1a3a2a">12 Mrd</span></div><div class="bar-track"><div class="bar-fill" style="width:100%;background:#1a3a2a"></div></div></div>
-      <div class="bar-wrap"><div class="bar-meta"><span class="name">SAM — Cible accessible</span><span class="val" style="color:#1D9E75">3,6 Mrd</span></div><div class="bar-track"><div class="bar-fill" style="width:62%;background:#1D9E75"></div></div></div>
-      <div class="bar-wrap" style="margin-bottom:0"><div class="bar-meta"><span class="name">SOM — Objectif Y1</span><span class="val" style="color:#F5A623">360 M</span></div><div class="bar-track"><div class="bar-fill" style="width:20%;background:#F5A623"></div></div></div>
+  <div class="scroll">
+    <div class="mkt-card">
+      <div class="mkt-title">📊 Taille du marché</div>
+      <div class="bar-wrap-onb"><div class="bar-meta"><span class="nm">TAM — Total</span><span class="vl" style="color:#1a3a2a">12 Mrd FCFA</span></div><div class="bar-track"><div class="bar-fill" style="width:100%;background:#1a3a2a"></div></div></div>
+      <div class="bar-wrap-onb"><div class="bar-meta"><span class="nm">SAM — Digitalisable</span><span class="vl" style="color:#1D9E75">3,6 Mrd FCFA</span></div><div class="bar-track"><div class="bar-fill" style="width:62%;background:#1D9E75"></div></div></div>
+      <div class="bar-wrap-onb" style="margin:0"><div class="bar-meta"><span class="nm">SOM — Objectif Y1</span><span class="vl" style="color:#F5A623">360 M FCFA</span></div><div class="bar-track"><div class="bar-fill" style="width:20%;background:#F5A623"></div></div></div>
     </div>
-    <div class="market-card">
-      <div class="market-title">😓 Problèmes actuels</div>
-      <div class="pain"><span style="font-size:18px">🏃</span><div><div class="pain-title">File d'attente en gare</div><div class="pain-text">Déplacement physique obligatoire, parfois plusieurs jours à l'avance</div></div></div>
-      <div class="pain"><span style="font-size:18px">❓</span><div><div class="pain-title">Zéro traçabilité colis</div><div class="pain-text">Pertes et retards fréquents, aucun suivi possible pour l'expéditeur</div></div></div>
-      <div class="pain"><span style="font-size:18px">💸</span><div><div class="pain-title">Revenus non optimisés</div><div class="pain-text">Aucune donnée sur l'occupation ou la demande pour les compagnies</div></div></div>
+    <div class="mkt-card">
+      <div class="mkt-title"><span style="display:inline-flex;align-items:center;gap:6px;color:var(--green)"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span> Projections revenus</div>
+      <div class="proj-row"><span class="proj-year">Y1</span><div class="proj-bar-wrap"><div class="proj-bar" style="width:12%"></div></div><span class="proj-val">43 M</span></div>
+      <div class="proj-row"><span class="proj-year">Y2</span><div class="proj-bar-wrap"><div class="proj-bar" style="width:32%"></div></div><span class="proj-val">115 M</span></div>
+      <div class="proj-row"><span class="proj-year">Y3</span><div class="proj-bar-wrap"><div class="proj-bar" style="width:72%"></div></div><span class="proj-val">260 M</span></div>
+      <div class="proj-row"><span class="proj-year">Y4</span><div class="proj-bar-wrap"><div class="proj-bar" style="width:100%"></div></div><span class="proj-val">360 M</span></div>
     </div>
-    <div class="market-card">
-      <div class="market-title">💰 Modèle économique</div>
-      <div class="eco-row"><span class="k">Commission / billet</span><span class="v">2 – 5 %</span></div>
-      <div class="eco-row"><span class="k">Frais service client</span><span class="v">150 FCFA/billet</span></div>
-      <div class="eco-row"><span class="k">Abonnement compagnie</span><span class="v">50 – 150K FCFA/mois</span></div>
-      <div class="eco-row"><span class="k">Module colis TSR</span><span class="v">75 – 200K FCFA/mois</span></div>
+    <div class="mkt-card">
+      <div class="mkt-title">😓 Problèmes actuels</div>
+      <div class="pain"><span style="font-size:20px">🏃</span><div><div class="pain-title">File d'attente en gare</div><div class="pain-text">Déplacement physique obligatoire, parfois plusieurs jours à l'avance pour les trajets populaires</div></div></div>
+      <div class="pain"><span style="font-size:20px">❓</span><div><div class="pain-title">Zéro traçabilité colis</div><div class="pain-text">Pertes et retards fréquents, aucun suivi pour l'expéditeur ou le destinataire</div></div></div>
+      <div class="pain"><span style="font-size:20px">💸</span><div><div class="pain-title">Revenus non optimisés</div><div class="pain-text">Aucune donnée analytique sur l'occupation ou la demande pour les compagnies</div></div></div>
     </div>
-    <button class="btn-green" onclick="go('s-home')">Voir la démo →</button>
+    <div class="mkt-card">
+      <div class="mkt-title">💰 Modèle économique</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+        <div style="background:var(--surface2);border-radius:10px;padding:12px;border:0.5px solid var(--border)"><div style="font-size:20px;margin-bottom:4px">🎫</div><div style="font-size:18px;font-weight:800;color:var(--green)">2–5%</div><div style="font-size:10px;color:var(--text3);font-weight:600;margin-top:2px">Commission billet</div></div>
+        <div style="background:var(--surface2);border-radius:10px;padding:12px;border:0.5px solid var(--border)"><div style="font-size:20px;margin-bottom:4px">💼</div><div style="font-size:18px;font-weight:800;color:var(--green)">100K</div><div style="font-size:10px;color:var(--text3);font-weight:600;margin-top:2px">Abonnement/mois</div></div>
+        <div style="background:var(--surface2);border-radius:10px;padding:12px;border:0.5px solid var(--border)"><div style="font-size:20px;margin-bottom:4px">📦</div><div style="font-size:18px;font-weight:800;color:var(--green)">150K</div><div style="font-size:10px;color:var(--text3);font-weight:600;margin-top:2px">Module colis/mois</div></div>
+        <div style="background:var(--surface2);border-radius:10px;padding:12px;border:0.5px solid var(--border)"><div style="font-size:20px;margin-bottom:4px">⚡</div><div style="font-size:18px;font-weight:800;color:var(--green)">150 F</div><div style="font-size:10px;color:var(--text3);font-weight:600;margin-top:2px">Frais service</div></div>
+      </div>
+    </div>
+    <button class="btn btn-green" onclick="go('s-home')" style="display:flex;align-items:center;justify-content:center;gap:8px">Voir la démo <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
   </div>
 </div>
 
@@ -388,135 +547,201 @@ html,body{height:100%;overflow:hidden;background:#f0f0ec;font-family:-apple-syst
   <div class="app-header">
     <span class="logo"><span class="mon">Mon</span><span class="billet">Billet</span><span class="bf">.bf</span></span>
     <div style="display:flex;gap:8px;align-items:center">
-      <span style="font-size:11px;color:#888;border:0.5px solid #ddd;padding:3px 9px;border-radius:20px;font-weight:500">FR</span>
-      <div onclick="go('s-colis')" style="width:34px;height:34px;border-radius:50%;background:#f5f5f0;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer">🔔</div>
+      <span onclick="toggleDark()" style="font-size:18px;cursor:pointer">🌙</span>
+      <div onclick="showPush('🚌','Rappel départ','Rahimo R-07 part dans 30 min')" style="width:34px;height:34px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;cursor:pointer;border:0.5px solid var(--border);position:relative;color:var(--text2)"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span style="position:absolute;top:-2px;right:-2px;width:10px;height:10px;background:var(--red);border-radius:50%;border:2px solid var(--surface)"></span></div>
     </div>
   </div>
-  <div class="scroll-area">
-    <div class="hero-card">
+  <div class="scroll">
+    <div class="hero">
       <div class="hero-loc">📍 Ouagadougou · Burkina Faso</div>
       <div class="hero-title">Voyagez<br><span class="hero-accent">sans file d'attente</span></div>
       <div class="hero-sub">Réservez votre siège en 2 minutes</div>
       <div class="hero-stats">
-        <div><div class="stat-n">5</div><div class="stat-l">Compagnies</div></div>
-        <div><div class="stat-n">30+</div><div class="stat-l">Destinations</div></div>
-        <div><div class="stat-n">24/7</div><div class="stat-l">Réservation</div></div>
+        <div><div class="hs-n">5</div><div class="hs-l">Compagnies</div></div>
+        <div><div class="hs-n">30+</div><div class="hs-l">Destinations</div></div>
+        <div><div class="hs-n">24/7</div><div class="hs-l">Réservation</div></div>
       </div>
+    </div>
+    <div class="promo-banner">
+      <span style="font-size:22px">🎉</span>
+      <div class="promo-text">Première réservation<br><strong>Frais de service offerts !</strong></div>
+      <div class="promo-val">-150F</div>
     </div>
     <div class="tabs">
-      <div class="tab active" onclick="setTab(0,this)">🎫 Billet</div>
-      <div class="tab" onclick="setTab(1,this)">📦 Colis</div>
-      <div class="tab" onclick="setTab(2,this)">🔍 Suivi</div>
+      <div class="tab active" onclick="setTab(0,this)"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 17v2M13 11v2"/></svg> Billet</div>
+      <div class="tab" onclick="setTab(1,this)"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 9.4 7.55 4.24"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg> Colis</div>
+      <div class="tab" onclick="setTab(2,this)"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg> Suivi</div>
     </div>
-    <div id="tab-billet">
+    <div id="tab-0">
       <div style="display:flex;gap:8px;align-items:flex-start">
-        <div style="flex:1"><div class="form-group"><label class="form-label">Départ</label><div class="form-input">📍 Ouagadougou</div></div></div>
-        <div class="swap-btn">⇅</div>
-        <div style="flex:1"><div class="form-group"><label class="form-label">Destination</label><div class="form-input" id="dest-inp">🏁 <span class="ph">Choisir ville</span></div></div></div>
+        <div style="flex:1"><div class="form-group"><label class="form-label">Départ</label><div class="form-field" onclick="openModal('depart')"><span style="color:var(--green);display:flex"><svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span><span class="val" id="fld-depart">Ouagadougou</span></div></div></div>
+        <div class="swap" onclick="swapCities()"><svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg></div>
+        <div style="flex:1"><div class="form-group"><label class="form-label">Destination</label><div class="form-field" id="fld-dest-display" onclick="openModal('dest')"><span style="color:var(--text3);display:flex"><svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></span><span class="ph" id="fld-dest-txt">Choisir</span></div></div></div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label class="form-label">Date</label><div class="form-input">📅 19 mars</div></div>
-        <div class="form-group"><label class="form-label">Passagers</label><div class="form-input">👤 1</div></div>
+        <div class="form-group"><label class="form-label">Date</label><div class="form-field" onclick="openModal('date')"><span style="color:var(--text3);display:flex"><svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span><span class="val" id="fld-date">19 mars</span></div></div>
+        <div class="form-group"><label class="form-label">Passagers</label><div class="form-field" onclick="openModal('pax')"><span style="color:var(--text3);display:flex"><svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="val" id="fld-pax">1 adulte</span></div></div>
       </div>
-      <button class="btn-primary" onclick="doSearch()">Rechercher un trajet →</button>
+      <button class="btn btn-amber" onclick="doSearch()" style="display:flex;align-items:center;justify-content:center;gap:8px">Rechercher <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
     </div>
-    <div id="tab-colis" style="display:none">
-      <div class="form-group"><label class="form-label">Expéditeur</label><div class="form-input">👤 Votre nom</div></div>
-      <div class="form-group"><label class="form-label">Destination</label><div class="form-input">🏁 <span class="ph">Choisir ville</span></div></div>
-      <button class="btn-primary" onclick="go('s-colis')">Envoyer / Suivre →</button>
+    <div id="tab-1" style="display:none">
+      <div class="form-group"><label class="form-label">De</label><div class="form-field" onclick="openModal('depart')"><span>📍</span><span class="val">Ouagadougou</span></div></div>
+      <div class="form-group"><label class="form-label">Vers</label><div class="form-field" onclick="openModal('dest')"><span>🏁</span><span class="ph">Choisir ville</span></div></div>
+      <button class="btn btn-amber" onclick="go('s-colis')">Envoyer un colis →</button>
     </div>
-    <div id="tab-suivi" style="display:none">
-      <div class="form-group"><label class="form-label">Numéro de suivi</label><div class="form-input">🔍 <span class="ph">Ex : TSR-2026-00234</span></div></div>
-      <button class="btn-primary" onclick="go('s-colis')">Suivre mon colis →</button>
+    <div id="tab-2" style="display:none">
+      <div class="form-group"><label class="form-label">Numéro de suivi</label><div class="form-field" onclick="go('s-colis')"><span>🔍</span><span class="ph">Ex: TSR-2026-00234</span></div></div>
+      <button class="btn btn-amber" onclick="go('s-colis')">Suivre →</button>
     </div>
   </div>
   <div class="bottom-nav">
-    <div class="bnav-item active"><div class="bnav-icon">🏠</div>Accueil</div>
-    <div class="bnav-item" onclick="go('s-results')"><div class="bnav-icon">🔍</div>Chercher</div>
-    <div class="bnav-item" onclick="go('s-success')"><div class="bnav-icon">🎫</div>Billets</div>
-    <div class="bnav-item" onclick="go('s-colis')"><div class="bnav-icon">📦</div>Colis</div>
-    <div class="bnav-item" onclick="go('s-dash')"><div class="bnav-icon">👤</div>Profil</div>
+    <div class="bnav active"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>Accueil</div>
+    <div class="bnav" onclick="go('s-results')"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>Chercher</div>
+    <div class="bnav" onclick="go('s-success')"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 17v2M13 11v2"/></svg></div>Billets</div>
+    <div class="bnav" onclick="go('s-colis')"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 9.4 7.55 4.24"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg></div>Colis</div>
+    <div class="bnav" onclick="go('s-profile')"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>Profil</div>
+  </div>
+
+  <!-- MODALS inside s-home -->
+  <!-- City Modal -->
+  <div class="modal-overlay" id="modal-city">
+    <div class="modal-sheet">
+      <div class="modal-header"><div class="modal-title" id="modal-city-title">Choisir ville</div><div class="modal-close" onclick="closeModal('city')" style="display:flex;color:var(--text3)"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></div></div>
+      <div class="modal-search"><input type="text" id="city-search" placeholder="Rechercher une ville..." oninput="filterCities(this.value)"></div>
+      <div class="modal-list" id="city-list"></div>
+    </div>
+  </div>
+
+  <!-- Date Modal -->
+  <div class="modal-overlay" id="modal-date">
+    <div class="modal-sheet">
+      <div class="modal-header"><div class="modal-title">Choisir une date</div><div class="modal-close" onclick="closeModal('date')" style="display:flex;color:var(--text3)"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></div></div>
+      <div class="month-nav"><div class="month-btn" onclick="changeMonth(-1)" style="display:flex;color:var(--green)"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></div><span id="cal-month">Mars 2026</span><div class="month-btn" onclick="changeMonth(1)" style="display:flex;color:var(--green)"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></div></div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);padding:8px 12px 4px;gap:2px">
+        <div style="text-align:center;font-size:10px;font-weight:700;color:var(--text3);padding:4px">Lu</div>
+        <div style="text-align:center;font-size:10px;font-weight:700;color:var(--text3);padding:4px">Ma</div>
+        <div style="text-align:center;font-size:10px;font-weight:700;color:var(--text3);padding:4px">Me</div>
+        <div style="text-align:center;font-size:10px;font-weight:700;color:var(--text3);padding:4px">Je</div>
+        <div style="text-align:center;font-size:10px;font-weight:700;color:var(--text3);padding:4px">Ve</div>
+        <div style="text-align:center;font-size:10px;font-weight:700;color:var(--text3);padding:4px">Sa</div>
+        <div style="text-align:center;font-size:10px;font-weight:700;color:var(--text3);padding:4px">Di</div>
+      </div>
+      <div class="date-grid" id="cal-grid"></div>
+    </div>
+  </div>
+
+  <!-- Passengers Modal -->
+  <div class="modal-overlay" id="modal-pax">
+    <div class="modal-sheet">
+      <div class="modal-header"><div class="modal-title">Passagers</div><div class="modal-close" onclick="closeModal('pax')" style="display:flex;color:var(--text3)"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></div></div>
+      <div style="padding:12px 18px">
+        <div class="pax-row">
+          <div class="pax-info"><div class="name">Adultes</div><div class="sub">12 ans et plus</div></div>
+          <div class="pax-ctrl"><div class="pax-btn" onclick="changePax('a',-1)" style="display:flex;align-items:center;justify-content:center"><svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></div><div class="pax-val" id="pax-a">1</div><div class="pax-btn" onclick="changePax('a',1)" style="display:flex;align-items:center;justify-content:center"><svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div>
+        </div>
+        <div class="pax-row">
+          <div class="pax-info"><div class="name">Enfants</div><div class="sub">2–11 ans (−30%)</div></div>
+          <div class="pax-ctrl"><div class="pax-btn" onclick="changePax('e',-1)" style="display:flex;align-items:center;justify-content:center"><svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></div><div class="pax-val" id="pax-e">0</div><div class="pax-btn" onclick="changePax('e',1)" style="display:flex;align-items:center;justify-content:center"><svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div>
+        </div>
+        <div class="pax-row">
+          <div class="pax-info"><div class="name">Bébés</div><div class="sub">Moins de 2 ans (gratuit)</div></div>
+          <div class="pax-ctrl"><div class="pax-btn" onclick="changePax('b',-1)" style="display:flex;align-items:center;justify-content:center"><svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></div><div class="pax-val" id="pax-b">0</div><div class="pax-btn" onclick="changePax('b',1)" style="display:flex;align-items:center;justify-content:center"><svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div>
+        </div>
+        <button class="btn btn-green" onclick="confirmPax()">Confirmer</button>
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- S2: RESULTS -->
 <div class="screen" id="s-results">
-  <div class="nav-bar"><button class="nav-back" onclick="go('s-home')">← Retour</button><span class="nav-title">Résultats</span><span>⚙️</span></div>
-  <div class="scroll-area">
-    <div style="margin-bottom:12px"><div style="font-size:15px;font-weight:700;color:#888">Ouaga → <span style="color:#1D9E75" id="dest-lbl">Bobo-Dioulasso</span></div><div style="font-size:11px;color:#aaa">Mer 19 mars · 1 passager</div></div>
-    <div class="filter-row"><div class="pill active">Tous</div><div class="pill">Matin</div><div class="pill">Après-midi</div><div class="pill">Moins cher</div></div>
-    <div class="card featured" onclick="go('s-seats')">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px"><div><div class="company-name">Rahimo</div><span class="company-badge">Confort Plus</span></div><div style="text-align:right"><div class="big-price">3 500</div><div class="price-unit">FCFA / pers.</div></div></div>
-      <div class="route-row"><div><div class="big-time">06:00</div><div class="city-label">Ouagadougou</div></div><div class="dur">🚌<br>5h 30min</div><div style="text-align:right"><div class="big-time">11:30</div><div class="city-label">Bobo-Dioulasso</div></div></div>
-      <div class="tag-row"><span class="tag">22 places</span><span class="tag green">Climatisé</span></div>
+  <div class="nav-bar"><button class="nav-back" onclick="go('s-home')"><svg style="width:16px;height:16px;margin-right:4px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>Retour</button><span class="nav-title">Résultats</span><span style="display:flex;color:var(--text3);cursor:pointer"><svg style="width:20px;height:20px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span></div>
+  <div class="scroll">
+    <div style="margin-bottom:12px">
+      <div style="font-size:16px;font-weight:800;color:var(--text3)">Ouaga → <span style="color:var(--green)" id="dest-lbl">Bobo-Dioulasso</span></div>
+      <div style="font-size:11px;color:var(--text3);margin-top:2px" id="results-meta">Mer 19 mars · <span id="r-pax">1 passager</span></div>
     </div>
-    <div class="card" onclick="go('s-seats')">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px"><div><div class="company-name">Élitiste</div><span class="company-badge vip">VIP</span></div><div style="text-align:right"><div class="big-price">5 000</div><div class="price-unit">FCFA / pers.</div></div></div>
-      <div class="route-row"><div><div class="big-time">08:00</div><div class="city-label">Ouagadougou</div></div><div class="dur">🚌<br>5h 00min</div><div style="text-align:right"><div class="big-time">13:00</div><div class="city-label">Bobo-Dioulasso</div></div></div>
-      <div class="tag-row"><span class="tag">5 places</span><span class="tag">USB + Repas</span></div>
+    <div class="filter-row" id="filter-row">
+      <div class="pill active" onclick="filterResults('all',this)">Tous</div>
+      <div class="pill" onclick="filterResults('morning',this)">Matin</div>
+      <div class="pill" onclick="filterResults('afternoon',this)">Après-midi</div>
+      <div class="pill" onclick="filterResults('cheap',this)">Moins cher</div>
+      <div class="pill" onclick="filterResults('vip',this)">VIP</div>
+      <div class="pill" onclick="filterResults('clim',this)">Climatisé</div>
     </div>
-    <div class="card" onclick="go('s-seats')">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px"><div><div class="company-name">TSR</div><span class="company-badge">Standard</span></div><div style="text-align:right"><div class="big-price">3 000</div><div class="price-unit">FCFA / pers.</div></div></div>
-      <div class="route-row"><div><div class="big-time">10:30</div><div class="city-label">Ouagadougou</div></div><div class="dur">🚌<br>6h</div><div style="text-align:right"><div class="big-time">16:30</div><div class="city-label">Bobo-Dioulasso</div></div></div>
-      <div class="tag-row"><span class="tag">18 places</span></div>
-    </div>
+    <div id="results-list"></div>
   </div>
-  <div class="bottom-nav"><div class="bnav-item" onclick="go('s-home')"><div class="bnav-icon">🏠</div>Accueil</div><div class="bnav-item active"><div class="bnav-icon">🔍</div>Chercher</div><div class="bnav-item"><div class="bnav-icon">🎫</div>Billets</div><div class="bnav-item" onclick="go('s-colis')"><div class="bnav-icon">📦</div>Colis</div><div class="bnav-item" onclick="go('s-dash')"><div class="bnav-icon">👤</div>Profil</div></div>
+  <div class="bottom-nav">
+    <div class="bnav" onclick="go('s-home')"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>Accueil</div>
+    <div class="bnav active"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>Chercher</div>
+    <div class="bnav"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 17v2M13 11v2"/></svg></div>Billets</div>
+    <div class="bnav" onclick="go('s-colis')"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 9.4 7.55 4.24"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg></div>Colis</div>
+    <div class="bnav" onclick="go('s-profile')"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>Profil</div>
+  </div>
 </div>
 
 <!-- S3: SEATS -->
 <div class="screen" id="s-seats">
-  <div class="nav-bar"><button class="nav-back" onclick="go('s-results')">← Résultats</button><span class="nav-title">Votre siège</span><span>ℹ️</span></div>
-  <div class="scroll-area">
-    <div class="trip-summary"><div><div style="font-size:13px;font-weight:700">Rahimo · Ouaga → Bobo</div><div style="font-size:11px;color:#888">06:00 · Bus R-07 · 44 places</div></div><div style="font-size:15px;font-weight:700;color:#1D9E75">3 500 FCFA</div></div>
-    <div class="legend"><div class="leg-item"><div class="leg-dot" style="background:white"></div>Libre</div><div class="leg-item"><div class="leg-dot" style="background:#f0f0f0;border-color:#e0e0e0"></div>Occupé</div><div class="leg-item"><div class="leg-dot" style="background:#1D9E75;border-color:#1D9E75"></div>Choisi</div><div class="leg-item"><div class="leg-dot" style="border-color:#F5A623"></div>VIP</div></div>
+  <div class="nav-bar"><button class="nav-back" onclick="go('s-results')"><svg style="width:16px;height:16px;margin-right:4px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>Résultats</button><span class="nav-title">Votre siège</span><span>ℹ️</span></div>
+  <div class="scroll">
+    <div class="trip-summary"><div><div style="font-size:13px;font-weight:700;color:var(--text)" id="seat-trip-label">Rahimo · Ouaga → Bobo</div><div style="font-size:11px;color:var(--text3)">06:00 · Bus R-07 · 44 places</div></div><div style="font-size:16px;font-weight:800;color:var(--green)" id="seat-price">3 500 FCFA</div></div>
+    <div class="legend">
+      <div class="leg-item"><div class="leg-dot" style="background:var(--surface)"></div>Libre</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--surface2)"></div>Occupé</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--green);border-color:var(--green)"></div>Choisi</div>
+      <div class="leg-item"><div class="leg-dot" style="border-color:var(--amber)"></div>VIP</div>
+    </div>
     <div class="seat-wrap"><div class="bus-front">🚗 AVANT · CHAUFFEUR</div><div class="seat-grid"><div class="seat-col" id="col-l"></div><div></div><div class="seat-col" id="col-r"></div></div></div>
-    <button class="btn-primary" id="seat-btn" onclick="go('s-baggage')" style="opacity:.4;pointer-events:none">Confirmer le siège →</button>
+    <div style="background:var(--green-light);border-radius:12px;padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;gap:10px" id="seat-hint">
+      <span style="font-size:20px">💡</span>
+      <span style="font-size:12px;color:var(--green-text);font-weight:600">Cliquez sur un siège libre pour le sélectionner</span>
+    </div>
+    <button class="btn btn-amber" id="seat-btn" onclick="go('s-baggage')" style="opacity:.4;pointer-events:none">Confirmer le siège →</button>
   </div>
-  <div class="bottom-nav"><div class="bnav-item" onclick="go('s-home')"><div class="bnav-icon">🏠</div>Accueil</div><div class="bnav-item active"><div class="bnav-icon">🔍</div>Chercher</div><div class="bnav-item"><div class="bnav-icon">🎫</div>Billets</div><div class="bnav-item"><div class="bnav-icon">📦</div>Colis</div><div class="bnav-item"><div class="bnav-icon">👤</div>Profil</div></div>
+  <div class="bottom-nav"><div class="bnav" onclick="go('s-home')"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>Accueil</div><div class="bnav active"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>Chercher</div><div class="bnav"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 17v2M13 11v2"/></svg></div>Billets</div><div class="bnav"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 9.4 7.55 4.24"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg></div>Colis</div><div class="bnav"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>Profil</div></div>
 </div>
 
 <!-- S4: BAGGAGE -->
 <div class="screen" id="s-baggage">
-  <div class="nav-bar"><button class="nav-back" onclick="go('s-seats')">← Siège</button><span class="nav-title">Bagages</span></div>
-  <div class="scroll-area">
-    <div class="info-banner">ℹ️ Bagage cabine gratuit inclus (max 5 kg).</div>
-    <div class="bag-card" style="border-color:#1D9E75"><div class="bag-head"><span style="font-size:22px">🎒</span><div><div class="bag-name">Bagage cabine</div><div class="bag-sub">Max 5 kg · Avec vous</div></div><span class="bag-price">Gratuit</span></div></div>
-    <div class="section-lbl">Supplémentaires</div>
-    <div class="bag-card"><div class="bag-head"><span style="font-size:22px">🧳</span><div><div class="bag-name">Petit bagage</div><div class="bag-sub">5–15 kg · En soute</div></div><div class="bag-price">1 000<br><span style="font-size:9px;font-weight:400;color:#888">FCFA/unité</span></div></div><div class="counter"><div class="cnt-btn" onclick="changeBag('s',-1)">−</div><span class="cnt-val" id="cnt-s">0</span><div class="cnt-btn" onclick="changeBag('s',1)">+</div><span style="font-size:11px;color:#888">unité(s)</span></div></div>
-    <div class="bag-card"><div class="bag-head"><span style="font-size:22px">📦</span><div><div class="bag-name">Grand bagage</div><div class="bag-sub">15–30 kg · En soute</div></div><div class="bag-price">2 500<br><span style="font-size:9px;font-weight:400;color:#888">FCFA/unité</span></div></div><div class="counter"><div class="cnt-btn" onclick="changeBag('l',-1)">−</div><span class="cnt-val" id="cnt-l">1</span><div class="cnt-btn" onclick="changeBag('l',1)">+</div><span style="font-size:11px;color:#888">unité(s)</span></div></div>
-    <div class="recap"><div class="recap-title">Récapitulatif</div><div class="recap-row"><span>Bagage cabine</span><span style="color:#1D9E75;font-weight:600">Gratuit</span></div><div id="bag-recap"></div></div>
-    <button class="btn-primary" onclick="go('s-payment')">Continuer →</button>
+  <div class="nav-bar"><button class="nav-back" onclick="go('s-seats')"><svg style="width:16px;height:16px;margin-right:4px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>Siège</button><span class="nav-title">Bagages</span></div>
+  <div class="scroll">
+    <div class="info-banner" style="display:flex;align-items:center;gap:8px"><span style="display:flex;color:var(--green-text)"><svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 20h0a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6Z"/><path d="M8 18V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v14"/><path d="M10 18V14M14 18V14"/></svg></span> Bagage cabine gratuit (max 5 kg) inclus.</div>
+    <div class="card" style="border-color:var(--green)"><div style="display:flex;align-items:center;gap:10px"><span style="font-size:24px">🎒</span><div><div style="font-size:13px;font-weight:700;color:var(--text)">Bagage cabine</div><div style="font-size:11px;color:var(--text3)">Max 5 kg · Avec vous</div></div><span style="margin-left:auto;font-size:14px;font-weight:800;color:var(--green)">Gratuit</span></div></div>
+    <div class="section-lbl">Bagages supplémentaires</div>
+    <div class="card"><div style="display:flex;align-items:center;gap:10px"><span style="font-size:24px">🧳</span><div><div style="font-size:13px;font-weight:700;color:var(--text)">Petit bagage</div><div style="font-size:11px;color:var(--text3)">5–15 kg · En soute</div></div><div style="margin-left:auto;text-align:right"><div style="font-size:15px;font-weight:800;color:var(--green)">1 000</div><div style="font-size:9px;color:var(--text3);font-weight:600">FCFA/unité</div></div></div><div class="counter"><div class="cnt-btn" onclick="chgBag('s',-1)" style="display:flex;align-items:center;justify-content:center"><svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></div><span class="cnt-val" id="cnt-s">0</span><div class="cnt-btn" onclick="chgBag('s',1)" style="display:flex;align-items:center;justify-content:center"><svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div><span style="font-size:11px;color:var(--text3)">unité(s)</span></div></div>
+    <div class="card"><div style="display:flex;align-items:center;gap:10px"><span style="font-size:24px">📦</span><div><div style="font-size:13px;font-weight:700;color:var(--text)">Grand bagage</div><div style="font-size:11px;color:var(--text3)">15–30 kg · En soute</div></div><div style="margin-left:auto;text-align:right"><div style="font-size:15px;font-weight:800;color:var(--green)">2 500</div><div style="font-size:9px;color:var(--text3);font-weight:600">FCFA/unité</div></div></div><div class="counter"><div class="cnt-btn" onclick="chgBag('l',-1)" style="display:flex;align-items:center;justify-content:center"><svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></div><span class="cnt-val" id="cnt-l">1</span><div class="cnt-btn" onclick="chgBag('l',1)" style="display:flex;align-items:center;justify-content:center"><svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div><span style="font-size:11px;color:var(--text3)">unité(s)</span></div></div>
+    <div style="background:var(--surface2);border-radius:var(--radius);padding:13px;margin-top:4px;border:0.5px solid var(--border)"><div class="section-lbl" style="margin:0 0 8px">Récapitulatif</div><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:4px"><span>Bagage cabine</span><span style="color:var(--green);font-weight:700">Gratuit</span></div><div id="bag-recap"></div></div>
+    <button class="btn btn-amber" onclick="go('s-payment')" style="margin-top:10px">Continuer →</button>
   </div>
-  <div class="bottom-nav"><div class="bnav-item" onclick="go('s-home')"><div class="bnav-icon">🏠</div>Accueil</div><div class="bnav-item active"><div class="bnav-icon">🔍</div>Chercher</div><div class="bnav-item"><div class="bnav-icon">🎫</div>Billets</div><div class="bnav-item"><div class="bnav-icon">📦</div>Colis</div><div class="bnav-item"><div class="bnav-icon">👤</div>Profil</div></div>
+  <div class="bottom-nav"><div class="bnav" onclick="go('s-home')"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>Accueil</div><div class="bnav active"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>Chercher</div><div class="bnav"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 17v2M13 11v2"/></svg></div>Billets</div><div class="bnav"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 9.4 7.55 4.24"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg></div>Colis</div><div class="bnav"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>Profil</div></div>
 </div>
 
 <!-- S5: PAYMENT -->
 <div class="screen" id="s-payment">
-  <div class="nav-bar"><button class="nav-back" onclick="go('s-baggage')">← Bagages</button><span class="nav-title">Paiement</span><span>🔒</span></div>
-  <div class="scroll-area">
-    <div class="order-box"><div class="order-head">Ouaga → Bobo-Dioulasso</div><div style="font-size:11px;color:#888;margin-bottom:8px">Rahimo · Siège <span id="pay-seat">12</span> · 06:00</div><div class="order-row"><span>Billet (×1)</span><span>3 500 FCFA</span></div><div id="pay-bags-rows"></div><div class="order-row"><span>Frais de service</span><span>150 FCFA</span></div><div class="order-total"><span>Total</span><span id="pay-total">6 150 FCFA</span></div></div>
+  <div class="nav-bar"><button class="nav-back" onclick="go('s-baggage')"><svg style="width:16px;height:16px;margin-right:4px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>Bagages</button><span class="nav-title">Paiement</span><span style="display:flex;color:var(--text3)"><svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span></div>
+  <div class="scroll">
+    <div class="order-box"><div class="order-head">Récapitulatif commande</div><div style="font-size:11px;color:var(--text3);margin-bottom:10px">Rahimo · Siège <span id="pay-seat">?</span> · 06:00 · <span id="pay-date">19 mars</span></div><div class="order-row"><span>Billet ×<span id="pay-pax-n">1</span></span><span id="pay-billet-amt">3 500 FCFA</span></div><div id="pay-bags-rows"></div><div class="order-row" id="pay-service-row"><span>Frais de service</span><span>150 FCFA</span></div><div class="order-total"><span>Total</span><span id="pay-total">3 650 FCFA</span></div></div>
     <div class="section-lbl">Mode de paiement</div>
     <div class="pay-opt sel" onclick="selPay(this,'OM','Orange Money','#FF6600')"><div class="pay-logo om">OM</div><div><div class="pay-name">Orange Money</div><div class="pay-sub">~45% utilisateurs BF</div></div><div class="radio"><div class="radio-dot"></div></div></div>
     <div class="pay-opt" onclick="selPay(this,'MM','Moov Money','#009900')"><div class="pay-logo mm">MM</div><div><div class="pay-name">Moov Money</div><div class="pay-sub">~30% utilisateurs BF</div></div><div class="radio"><div class="radio-dot"></div></div></div>
     <div class="pay-opt" onclick="selPay(this,'W','Wave','#0066FF')"><div class="pay-logo wv">W</div><div><div class="pay-name">Wave</div><div class="pay-sub">~15% utilisateurs BF</div></div><div class="radio"><div class="radio-dot"></div></div></div>
     <div class="pay-opt" onclick="selPay(this,'CB','Coris Bank','#993300')"><div class="pay-logo cb">CB</div><div><div class="pay-name">Coris Bank</div><div class="pay-sub">~10% utilisateurs BF</div></div><div class="radio"><div class="radio-dot"></div></div></div>
-    <button class="btn-primary" onclick="go('s-otp')">Payer <span id="pay-btn-total">6 150 FCFA</span> →</button>
+    <button class="btn btn-green" onclick="go('s-otp')">Payer <span id="pay-btn-amt">3 650 FCFA</span> →</button>
   </div>
-  <div class="bottom-nav"><div class="bnav-item" onclick="go('s-home')"><div class="bnav-icon">🏠</div>Accueil</div><div class="bnav-item"><div class="bnav-icon">🔍</div>Chercher</div><div class="bnav-item active"><div class="bnav-icon">🎫</div>Billets</div><div class="bnav-item"><div class="bnav-icon">📦</div>Colis</div><div class="bnav-item"><div class="bnav-icon">👤</div>Profil</div></div>
+  <div class="bottom-nav"><div class="bnav" onclick="go('s-home')"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>Accueil</div><div class="bnav"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>Chercher</div><div class="bnav active"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 17v2M13 11v2"/></svg></div>Billets</div><div class="bnav"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 9.4 7.55 4.24"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg></div>Colis</div><div class="bnav"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>Profil</div></div>
 </div>
 
 <!-- S6: OTP -->
 <div class="screen" id="s-otp">
-  <div class="nav-bar"><button class="nav-back" onclick="go('s-payment')">← Paiement</button><span class="nav-title">Confirmer</span><span>🔒</span></div>
+  <div class="nav-bar"><button class="nav-back" onclick="go('s-payment')"><svg style="width:16px;height:16px;margin-right:4px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>Paiement</button><span class="nav-title">Confirmation</span><span style="display:flex;color:var(--text3)"><svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span></div>
   <div id="otp-form" style="flex:1;display:flex;flex-direction:column;overflow-y:auto">
-    <div class="scroll-area">
+    <div class="scroll">
       <div class="otp-center">
-        <div class="op-badge"><div class="op-dot" id="op-dot" style="background:#FF6600">OM</div><span style="font-size:13px;font-weight:700;color:#1a1a1a" id="op-name">Orange Money</span></div>
+        <div class="op-badge"><div class="op-dot" id="op-dot" style="background:#FF6600">OM</div><span style="font-size:13px;font-weight:800;color:var(--amber-text)" id="op-name">Orange Money</span></div>
         <div class="otp-title">Entrez votre code PIN</div>
-        <div class="otp-sub">Code envoyé au</div>
+        <div class="otp-sub">Code envoyé au numéro</div>
         <div class="otp-phone">+226 70 •• •• 47</div>
-        <div class="otp-amount"><span class="lbl">Montant</span><span class="val" id="otp-amt">6 150 FCFA</span></div>
+        <div class="otp-amount"><span class="lbl">Montant à payer</span><span class="val" id="otp-amt">3 650 FCFA</span></div>
         <div class="otp-boxes"><div class="otp-box cur" id="ob0"></div><div class="otp-box" id="ob1"></div><div class="otp-box" id="ob2"></div><div class="otp-box" id="ob3"></div></div>
         <div class="otp-resend">Renvoyer le code (0:59)</div>
       </div>
@@ -524,335 +749,548 @@ html,body{height:100%;overflow:hidden;background:#f0f0ec;font-family:-apple-syst
         <div class="key" onclick="kp('1')">1</div><div class="key" onclick="kp('2')">2</div><div class="key" onclick="kp('3')">3</div>
         <div class="key" onclick="kp('4')">4</div><div class="key" onclick="kp('5')">5</div><div class="key" onclick="kp('6')">6</div>
         <div class="key" onclick="kp('7')">7</div><div class="key" onclick="kp('8')">8</div><div class="key" onclick="kp('9')">9</div>
-        <div class="key del" onclick="kp('del')">⌫</div><div class="key" onclick="kp('0')">0</div><div class="key ok" onclick="kpOk()">OK ✓</div>
+        <div class="key del" onclick="kp('del')" style="display:flex;align-items:center;justify-content:center"><svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg></div><div class="key" onclick="kp('0')">0</div><div class="key ok" onclick="kpOk()">OK ✓</div>
       </div>
     </div>
   </div>
-  <div id="otp-proc" style="display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px">
+  <div class="proc-wrap" id="otp-proc" style="display:none">
     <div class="spinner"></div>
     <div class="proc-title">Traitement en cours...</div>
-    <div class="proc-sub">Validation <span id="proc-op">Orange Money</span></div>
+    <div class="proc-sub">Validation du paiement<br><span id="proc-op" style="font-weight:700">Orange Money</span></div>
   </div>
 </div>
 
-<!-- S7: TICKET -->
+<!-- S7: SUCCESS -->
 <div class="screen" id="s-success">
-  <div class="app-header"><span class="logo"><span class="mon">Mon</span><span class="billet">Billet</span><span class="bf">.bf</span></span><span>···</span></div>
-  <div class="scroll-area">
-    <div class="success-wrap"><div class="ok-icon">✅</div><div class="ok-title">Paiement confirmé !</div><div class="ok-sub">Votre billet a été émis</div><div class="ok-ref">réf. MB-2026-00847</div></div>
+  <div class="app-header"><span class="logo"><span class="mon">Mon</span><span class="billet">Billet</span><span class="bf">.bf</span></span><span style="cursor:pointer;color:var(--text3)">···</span></div>
+  <div class="scroll">
+    <div class="success-wrap"><div class="ok-icon" style="color:var(--green)"><svg style="width:32px;height:32px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><div class="ok-title">Paiement confirmé !</div><div class="ok-sub">Votre billet a été émis avec succès</div><div class="ok-ref">réf. MB-2026-00847</div></div>
     <div class="ticket">
-      <div class="ticket-top"><div class="ticket-brand">MonBillet.bf</div><div class="ticket-route">Ouaga → Bobo</div><div class="ticket-meta">Mer 19 mars 2026 · 06:00 · Rahimo R-07</div></div>
+      <div class="ticket-top"><div class="ticket-brand">MONBILLET.BF</div><div class="ticket-route">Ouaga → Bobo</div><div class="ticket-meta">Mer 19 mars 2026 · 06:00 · Rahimo R-07</div></div>
       <div class="ticket-body">
         <div class="ticket-grid"><div><div class="tf-lbl">Siège</div><div class="tf-val" id="tk-seat">12</div></div><div><div class="tf-lbl">Classe</div><div class="tf-val">Confort</div></div><div><div class="tf-lbl">Passager</div><div class="tf-val">K.Evans</div></div><div><div class="tf-lbl">Durée</div><div class="tf-val">5h30</div></div></div>
         <div class="qr-area">
-          <div style="font-size:10px;color:#888;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;font-weight:600">Scanner à la gare</div>
-          <div class="qr-frame"><svg width="84" height="84" viewBox="0 0 80 80"><rect width="80" height="80" fill="white"/><rect x="5" y="5" width="30" height="30" fill="none" stroke="#1a1a1a" stroke-width="3"/><rect x="10" y="10" width="20" height="20" fill="#1a1a1a"/><rect x="45" y="5" width="30" height="30" fill="none" stroke="#1a1a1a" stroke-width="3"/><rect x="50" y="10" width="20" height="20" fill="#1a1a1a"/><rect x="5" y="45" width="30" height="30" fill="none" stroke="#1a1a1a" stroke-width="3"/><rect x="10" y="50" width="20" height="20" fill="#1a1a1a"/><rect x="45" y="45" width="8" height="8" fill="#1a1a1a"/><rect x="57" y="45" width="8" height="8" fill="#1a1a1a"/><rect x="45" y="57" width="8" height="8" fill="#1a1a1a"/><rect x="57" y="57" width="8" height="8" fill="#1a1a1a"/><rect x="38" y="38" width="5" height="5" fill="#1a1a1a"/></svg></div>
+          <div class="qr-hint-top">Scanner à la gare</div>
+          <div class="qr-frame"><svg width="90" height="90" viewBox="0 0 80 80"><rect width="80" height="80" fill="white"/><rect x="5" y="5" width="30" height="30" fill="none" stroke="#1a1a1a" stroke-width="3"/><rect x="10" y="10" width="20" height="20" fill="#1a1a1a"/><rect x="45" y="5" width="30" height="30" fill="none" stroke="#1a1a1a" stroke-width="3"/><rect x="50" y="10" width="20" height="20" fill="#1a1a1a"/><rect x="5" y="45" width="30" height="30" fill="none" stroke="#1a1a1a" stroke-width="3"/><rect x="10" y="50" width="20" height="20" fill="#1a1a1a"/><rect x="45" y="45" width="8" height="8" fill="#1a1a1a"/><rect x="57" y="45" width="8" height="8" fill="#1a1a1a"/><rect x="45" y="57" width="8" height="8" fill="#1a1a1a"/><rect x="57" y="57" width="8" height="8" fill="#1a1a1a"/><rect x="38" y="38" width="5" height="5" fill="#1a1a1a"/></svg></div>
           <div class="qr-code">MB-2026-00847</div><div class="qr-hint">Présentez à l'agent Rahimo</div>
         </div>
-        <div style="display:flex;gap:8px"><div class="btn-outline">📄 PDF</div><div class="btn-outline">🔔 Rappel</div></div>
+        <div style="display:flex;gap:8px"><button class="btn-sm" style="display:flex;align-items:center;justify-content:center;gap:5px"><svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> PDF</button><button class="btn-sm" style="display:flex;align-items:center;justify-content:center;gap:5px"><svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Partager</button><button class="btn-sm" onclick="showPush('✅','Billet enregistré','MB-2026-00847 · Rahimo 06:00')" style="display:flex;align-items:center;justify-content:center;gap:5px"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> Rappel</button></div>
       </div>
     </div>
-    <div class="btn-outline-g" onclick="go('s-home')">Retour à l'accueil</div>
+    <button class="btn-outline" onclick="go('s-home')">Retour à l'accueil</button>
   </div>
-  <div class="bottom-nav"><div class="bnav-item" onclick="go('s-home')"><div class="bnav-icon">🏠</div>Accueil</div><div class="bnav-item"><div class="bnav-icon">🔍</div>Chercher</div><div class="bnav-item active"><div class="bnav-icon">🎫</div>Billets</div><div class="bnav-item" onclick="go('s-colis')"><div class="bnav-icon">📦</div>Colis</div><div class="bnav-item" onclick="go('s-dash')"><div class="bnav-icon">👤</div>Profil</div></div>
+  <div class="bottom-nav"><div class="bnav" onclick="go('s-home')"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>Accueil</div><div class="bnav"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>Chercher</div><div class="bnav active"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 17v2M13 11v2"/></svg></div>Billets</div><div class="bnav" onclick="go('s-colis')"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 9.4 7.55 4.24"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg></div>Colis</div><div class="bnav" onclick="go('s-profile')"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>Profil</div></div>
 </div>
 
 <!-- S8: COLIS -->
 <div class="screen" id="s-colis">
-  <div class="nav-bar"><button class="nav-back" onclick="go('s-home')">← Accueil</button><span class="nav-title">Traçabilité colis</span><span>📦</span></div>
-  <div class="scroll-area">
+  <div class="nav-bar"><button class="nav-back" onclick="go('s-home')"><svg style="width:16px;height:16px;margin-right:4px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>Accueil</button><span class="nav-title">Traçabilité colis</span><span>📦</span></div>
+  <div class="scroll">
     <div class="track-card">
       <div class="track-top"><div class="track-ref">N° de suivi · TSR</div><div class="track-route">Ouaga → Bobo-Dioulasso</div><span class="track-badge" id="colis-badge">En transit</span></div>
       <div class="track-body">
         <div class="colis-meta"><div class="meta-row"><span class="k">Expéditeur</span><span class="v">Hamidou K.</span></div><div class="meta-row"><span class="k">Destinataire</span><span class="v">Fatoumata S.</span></div><div class="meta-row"><span class="k">Contenu</span><span class="v">Vêtements · 8 kg</span></div><div class="meta-row"><span class="k">Réf.</span><span class="v">TSR-2026-00234</span></div></div>
-        <div class="section-lbl">Suivi temps réel</div>
-        <div class="timeline">
+        <div class="section-lbl">Suivi en temps réel</div>
+        <div class="tl">
           <div class="tl-item"><div class="tl-dot done">✓</div><div class="tl-title">Dépôt en gare</div><div class="tl-sub">Gare de Ouagadougou</div><div class="tl-time">19 mars · 05:15</div></div>
           <div class="tl-item"><div class="tl-dot done">✓</div><div class="tl-title">Chargement bus</div><div class="tl-sub">Bus R-07 · QR scanné par agent</div><div class="tl-time">19 mars · 05:50</div></div>
-          <div class="tl-item"><div class="tl-dot active" id="tl-3">→</div><div class="tl-title" id="tl-3-t">En transit</div><div class="tl-sub">Sur la route Ouaga–Bobo</div><div class="tl-time">Depuis 06:00 · Arrivée ~11:30</div></div>
-          <div class="tl-item"><div class="tl-dot" id="tl-4"></div><div class="tl-title" style="color:#aaa" id="tl-4-t">Arrivée à destination</div><div class="tl-sub" style="color:#bbb">Gare de Bobo-Dioulasso</div></div>
-          <div class="tl-item"><div class="tl-dot"></div><div class="tl-title" style="color:#aaa">Remise au destinataire</div><div class="tl-sub" style="color:#bbb">Signature numérique requise</div></div>
+          <div class="tl-item"><div class="tl-dot active" id="tl3">→</div><div class="tl-title" id="tl3t">En transit</div><div class="tl-sub">Sur la route Ouaga–Bobo</div><div class="tl-time">Depuis 06:00 · Arrivée ~11:30</div></div>
+          <div class="tl-item"><div class="tl-dot" id="tl4"></div><div class="tl-title" style="color:var(--text3)" id="tl4t">Arrivée à destination</div><div class="tl-sub" style="color:var(--text3)">Gare de Bobo-Dioulasso</div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-title" style="color:var(--text3)">Remise au destinataire</div><div class="tl-sub" style="color:var(--text3)">Signature numérique requise</div></div>
         </div>
       </div>
     </div>
     <div class="section-lbl">Notifications</div>
-    <div class="notif-card"><span style="font-size:18px">✅</span><div><div class="notif-title">Colis pris en charge</div><div class="notif-sub">TSR confirme la réception en gare</div><div class="notif-time">05:16 · SMS + Push</div></div></div>
-    <div class="notif-card"><span style="font-size:18px">🚌</span><div><div class="notif-title">Départ du bus R-07</div><div class="notif-sub">Votre colis est en route</div><div class="notif-time">06:03 · SMS + Push</div></div></div>
-    <div class="notif-card" style="opacity:.45" id="n-arrive"><span style="font-size:18px">📍</span><div><div class="notif-title">Arrivée à destination</div><div class="notif-sub">En attente · ~11:30</div><div class="notif-time">En attente</div></div></div>
-    <div class="btn-outline-g" onclick="simArrive()" id="sim-btn" style="margin-top:6px">Simuler l'arrivée →</div>
+    <div class="notif-card"><span style="font-size:20px">✅</span><div><div class="notif-title">Colis pris en charge</div><div class="notif-sub">TSR confirme la réception en gare</div><div class="notif-time">05:16 · SMS + Push</div></div></div>
+    <div class="notif-card"><span style="font-size:20px">🚌</span><div><div class="notif-title">Départ du bus R-07</div><div class="notif-sub">Votre colis est en route</div><div class="notif-time">06:03 · SMS + Push</div></div></div>
+    <div class="notif-card" style="opacity:.4" id="n-arrive"><span style="font-size:20px">📍</span><div><div class="notif-title">Arrivée à destination</div><div class="notif-sub">En attente · ~11:30</div><div class="notif-time">En attente</div></div></div>
+    <button class="btn-outline" onclick="simArrive()" id="sim-btn">Simuler l'arrivée →</button>
   </div>
-  <div class="bottom-nav"><div class="bnav-item" onclick="go('s-home')"><div class="bnav-icon">🏠</div>Accueil</div><div class="bnav-item"><div class="bnav-icon">🔍</div>Chercher</div><div class="bnav-item"><div class="bnav-icon">🎫</div>Billets</div><div class="bnav-item active"><div class="bnav-icon">📦</div>Colis</div><div class="bnav-item" onclick="go('s-dash')"><div class="bnav-icon">👤</div>Profil</div></div>
+  <div class="bottom-nav"><div class="bnav" onclick="go('s-home')"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>Accueil</div><div class="bnav"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>Chercher</div><div class="bnav"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 17v2M13 11v2"/></svg></div>Billets</div><div class="bnav active"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 9.4 7.55 4.24"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg></div>Colis</div><div class="bnav" onclick="go('s-profile')"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>Profil</div></div>
 </div>
 
 <!-- S9: DASHBOARD -->
 <div class="screen" id="s-dash">
-  <div class="app-header"><span class="logo"><span class="mon">Mon</span><span class="billet">Billet</span><span class="bf">.bf</span> <span style="font-size:11px;color:#888;font-weight:400">Admin</span></span><div style="width:30px;height:30px;border-radius:50%;background:#1a3a2a;display:flex;align-items:center;justify-content:center;font-size:13px;color:white;font-weight:700">R</div></div>
-  <div class="scroll-area">
+  <div class="app-header"><span class="logo"><span class="mon">Mon</span><span class="billet">Billet</span><span class="bf">.bf</span> <span style="font-size:11px;color:var(--text3);font-weight:500">Admin</span></span><div style="width:30px;height:30px;border-radius:50%;background:var(--dark);display:flex;align-items:center;justify-content:center;font-size:13px;color:white;font-weight:800">R</div></div>
+  <div class="scroll">
     <div class="nav-seg"><div class="seg-tab active" onclick="dTab('o',this)">Dashboard</div><div class="seg-tab" onclick="dTab('v',this)">Voyages</div><div class="seg-tab" onclick="dTab('c',this)">Colis</div></div>
     <div id="d-o">
-      <div style="font-size:16px;font-weight:700;margin-bottom:2px">Bonjour, Rahimo 👋</div><div style="font-size:11px;color:#888;margin-bottom:14px">Mer 19 mars 2026 · 09h58</div>
+      <div style="font-size:16px;font-weight:800;color:var(--text);margin-bottom:2px">Bonjour, Rahimo 👋</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:14px;font-weight:500">Mer 19 mars 2026 · 09h58</div>
       <div class="kpi-grid"><div class="kpi"><div class="kpi-icon">🎫</div><div class="kpi-val">247</div><div class="kpi-lbl">Billets vendus</div><div class="kpi-chg">↑ +18% vs hier</div></div><div class="kpi"><div class="kpi-icon">💰</div><div class="kpi-val">864K</div><div class="kpi-lbl">Revenus FCFA</div><div class="kpi-chg">↑ +12%</div></div><div class="kpi"><div class="kpi-icon">💺</div><div class="kpi-val">78%</div><div class="kpi-lbl">Occupation</div><div class="kpi-chg">↑ +5 pts</div></div><div class="kpi"><div class="kpi-icon">📦</div><div class="kpi-val">43</div><div class="kpi-lbl">Colis transit</div><div class="kpi-chg neg">⚠ 2 alertes</div></div></div>
-      <div class="chart-box"><div class="chart-lbl">Ventes · 7 derniers jours</div><div class="bar-chart" id="bchart"></div></div>
+      <div class="chart-box"><div class="chart-lbl">Ventes 7 jours</div><div class="bar-chart" id="bchart"></div></div>
     </div>
-    <div id="d-v" style="display:none"><div class="list-card"><div class="list-title">Voyages actifs <span class="list-add">+ Nouveau</span></div><div class="list-item"><span style="font-size:18px">🚌</span><div><div class="list-route">Ouaga → Bobo-Dioulasso</div><div class="list-time">Bus R-07 · 19/03</div></div><span class="status-badge enroute">En route</span></div><div class="list-item"><span style="font-size:18px">🚌</span><div><div class="list-route">Ouaga → Koudougou</div><div class="list-time">Bus R-02 · 08:00</div></div><span class="status-badge quai">À quai</span></div><div class="list-item"><span style="font-size:18px">🚌</span><div><div class="list-route">Bobo → Ouaga</div><div class="list-time">Bus R-03 · 14:00</div></div><span class="status-badge ouvert">Ouvert</span></div></div></div>
-    <div id="d-c" style="display:none"><div class="list-card"><div class="list-title">Colis en transit <span style="font-size:10px;background:#FAEEDA;color:#854F0B;padding:2px 8px;border-radius:20px">⚠ 2 alertes</span></div><div class="list-item"><span style="font-size:18px">📦</span><div><div class="list-route">TSR-2026-00234</div><div class="list-time">Ouaga → Bobo · 8 kg</div></div><span class="status-badge enroute">En route</span></div><div class="list-item"><span style="font-size:18px">📦</span><div><div class="list-route">TSR-2026-00241</div><div class="list-time">Ouaga → Koudougou</div></div><span class="status-badge ouvert">Livré</span></div><div class="list-item"><span style="font-size:18px">⚠️</span><div><div class="list-route" style="color:#E24B4A">TSR-2026-00198</div><div class="list-time">Bobo → Ouaga · Retard</div></div><span class="status-badge retard">Retard</span></div></div></div>
+    <div id="d-v" style="display:none"><div class="list-card"><div class="list-title">Voyages actifs<span class="list-add">+</span></div><div class="list-item"><span style="font-size:18px">🚌</span><div><div class="list-route">Ouaga → Bobo</div><div class="list-time">R-07 · 06:00</div></div><span class="sbadge enroute">En route</span></div><div class="list-item"><span style="font-size:18px">🚌</span><div><div class="list-route">Ouaga → Koudougou</div><div class="list-time">R-02 · 08:00</div></div><span class="sbadge quai">À quai</span></div><div class="list-item"><span style="font-size:18px">🚌</span><div><div class="list-route">Bobo → Ouaga</div><div class="list-time">R-03 · 14:00</div></div><span class="sbadge ouvert">Ouvert</span></div></div></div>
+    <div id="d-c" style="display:none"><div class="list-card"><div class="list-title">Colis<span style="font-size:10px;background:var(--amber-light);color:var(--amber-text);padding:2px 8px;border-radius:20px;font-weight:700">⚠ 2 alertes</span></div><div class="list-item"><span style="font-size:18px">📦</span><div><div class="list-route">TSR-2026-00234</div><div class="list-time">Ouaga→Bobo · 8kg</div></div><span class="sbadge enroute">En route</span></div><div class="list-item"><span style="font-size:18px">📦</span><div><div class="list-route">TSR-2026-00241</div><div class="list-time">Ouaga→Koudougou</div></div><span class="sbadge ouvert">Livré</span></div><div class="list-item"><span style="font-size:18px">⚠️</span><div><div class="list-route" style="color:var(--red)">TSR-2026-00198</div><div class="list-time">Bobo→Ouaga</div></div><span class="sbadge retard">Retard</span></div></div></div>
   </div>
-  <div class="bottom-nav"><div class="bnav-item" onclick="go('s-home')"><div class="bnav-icon">🏠</div>Accueil</div><div class="bnav-item"><div class="bnav-icon">🔍</div>Chercher</div><div class="bnav-item"><div class="bnav-icon">🎫</div>Billets</div><div class="bnav-item" onclick="go('s-colis')"><div class="bnav-icon">📦</div>Colis</div><div class="bnav-item active"><div class="bnav-icon">👤</div>Profil</div></div>
+  <div class="bottom-nav"><div class="bnav" onclick="go('s-home')"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>Accueil</div><div class="bnav"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>Chercher</div><div class="bnav"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 17v2M13 11v2"/></svg></div>Billets</div><div class="bnav" onclick="go('s-colis')"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 9.4 7.55 4.24"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg></div>Colis</div><div class="bnav active"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>Profil</div></div>
+</div>
+
+<!-- S10: PROFILE -->
+<div class="screen" id="s-profile">
+  <div class="profile-header">
+    <div class="avatar">KE</div>
+    <div class="profile-name">Kaboré Evans</div>
+    <div class="profile-tel">+226 70 12 34 56</div>
+    <div class="profile-badge"><span style="display:inline-flex;align-items:center;gap:4px;color:var(--amber)"><svg class="ico-sm" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span> Membre Premium</div>
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-n">24</div><div class="stat-l">Voyages</div></div>
+      <div class="stat-box"><div class="stat-n">8</div><div class="stat-l">Colis</div></div>
+      <div class="stat-box"><div class="stat-n">12K</div><div class="stat-l">FCFA économisés</div></div>
+    </div>
+  </div>
+  <div class="scroll">
+    <div class="card" style="margin-top:4px">
+      <div class="menu-item" onclick="go('s-success')"><div class="menu-icon" style="color:var(--green)"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 17v2M13 11v2"/></svg></div><div><div class="menu-label">Mes billets</div><div style="font-size:11px;color:var(--text3)">3 billets actifs</div></div><div class="menu-arrow" style="display:flex;color:var(--text3)"><svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></div></div>
+      <div class="menu-item" onclick="go('s-colis')"><div class="menu-icon" style="color:var(--green)"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 9.4 7.55 4.24"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg></div><div><div class="menu-label">Mes colis</div><div style="font-size:11px;color:var(--text3)">1 en transit</div></div><div class="menu-arrow" style="display:flex;color:var(--text3)"><svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></div></div>
+      <div class="menu-item"><div class="menu-icon" style="color:var(--amber)"><svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></div><div><div class="menu-label">Adresses favorites</div><div style="font-size:11px;color:var(--text3)">Ouaga, Bobo, Koudougou</div></div><div class="menu-arrow" style="display:flex;color:var(--text3)"><svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></div></div>
+      <div class="menu-item"><div class="menu-icon" style="color:var(--blue-text)"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><div><div class="menu-label">Moyens de paiement</div><div style="font-size:11px;color:var(--text3)">Orange Money principal</div></div><div class="menu-arrow" style="display:flex;color:var(--text3)"><svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></div></div>
+    </div>
+    <div class="card">
+      <div class="menu-item"><div class="menu-icon" style="color:var(--amber)"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div><div><div class="menu-label">Notifications</div><div style="font-size:11px;color:var(--text3)">Activées · SMS + Push</div></div><div class="menu-arrow" style="display:flex;color:var(--text3)"><svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></div></div>
+      <div class="dark-toggle" onclick="toggleDark()">
+        <div class="menu-icon" style="color:var(--text2)"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div>
+        <div style="flex:1"><div class="menu-label">Mode sombre</div><div style="font-size:11px;color:var(--text3)">Thème de l'application</div></div>
+        <div class="toggle-track" id="toggle-track"><div class="toggle-thumb"></div></div>
+      </div>
+      <div class="menu-item"><div class="menu-icon" style="color:var(--blue-text)"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div><div><div class="menu-label">Langue</div><div style="font-size:11px;color:var(--text3)">Français</div></div><div class="menu-arrow" style="display:flex;color:var(--text3)"><svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></div></div>
+    </div>
+    <button class="btn btn-green" onclick="go('s-dash')">Accès Back-office Admin →</button>
+    <button class="btn-outline" style="color:var(--red);border-color:var(--red);margin-top:8px" style="display:flex;align-items:center;justify-content:center;gap:8px">Se déconnecter <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
+  </div>
+  <div class="bottom-nav"><div class="bnav" onclick="go('s-home')"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>Accueil</div><div class="bnav"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>Chercher</div><div class="bnav"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 17v2M13 11v2"/></svg></div>Billets</div><div class="bnav" onclick="go('s-colis')"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 9.4 7.55 4.24"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg></div>Colis</div><div class="bnav active"><div class="bnav-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>Profil</div></div>
 </div>
 
 </template>
 
 <script>
 (function(){
-  var APP_ID = 'app';
-  var curScreen = 's-home';
-  var selSeat = null;
-  var smallBags = 0, largeBags = 1;
-  var otpCode = [];
-  var payOp = {code:'OM', name:'Orange Money', color:'#FF6600'};
-  var occupied = [3,5,8,13,18,23,28,33,38,43];
-  var vipS = [1,4];
+var CITIES=[
+  {name:'Bobo-Dioulasso',region:'Hauts-Bassins',km:'360 km'},
+  {name:'Koudougou',region:'Centre-Ouest',km:'100 km'},
+  {name:'Ouahigouya',region:'Nord',km:'180 km'},
+  {name:'Banfora',region:'Cascades',km:'450 km'},
+  {name:'Dédougou',region:'Boucle du Mouhoun',km:'220 km'},
+  {name:'Fada N\'Gourma',region:'Est',km:'220 km'},
+  {name:'Tenkodogo',region:'Centre-Est',km:'185 km'},
+  {name:'Kaya',region:'Centre-Nord',km:'100 km'},
+  {name:'Ziniaré',region:'Plateau-Central',km:'35 km'},
+  {name:'Manga',region:'Centre-Sud',km:'130 km'},
+  {name:'Réo',region:'Sanguié',km:'150 km'},
+  {name:'Houndé',region:'Tuy',km:'290 km'}
+];
+var TRIPS=[
+  {company:'Rahimo',class:'Confort Plus',price:3500,dep:'06:00',arr:'11:30',dur:'5h30',seats:22,tags:['Climatisé'],vip:false,morning:true},
+  {company:'Élitiste',class:'VIP',price:5000,dep:'08:00',arr:'13:00',dur:'5h00',seats:5,tags:['USB','Repas','WiFi'],vip:true,morning:true},
+  {company:'TSR',class:'Standard',price:3000,dep:'10:30',arr:'16:30',dur:'6h00',seats:18,tags:[],vip:false,morning:false},
+  {company:'Rakieta',class:'Confort',price:3200,dep:'13:00',arr:'19:00',dur:'6h00',seats:30,tags:['Climatisé'],vip:false,morning:false},
+  {company:'STAF',class:'Premium',price:4500,dep:'14:30',arr:'19:30',dur:'5h00',seats:8,tags:['USB','Climatisé'],vip:true,morning:false}
+];
 
-  // Inject screens into both desktop and mobile containers
-  function injectScreens(container) {
-    var tpl = document.getElementById('screens-tpl');
-    var clone = document.importNode(tpl.content, true);
-    container.appendChild(clone);
-  }
+var state={
+  depart:'Ouagadougou', dest:'Bobo-Dioulasso',
+  dateLabel:'19 mars', dateFull:'2026-03-19',
+  adults:1, children:0, babies:0,
+  selSeat:null, smallBags:0, largeBags:1,
+  otpCode:[], payOp:{code:'OM',name:'Orange Money',color:'#FF6600'},
+  selTrip:TRIPS[0], activeFilter:'all',
+  calYear:2026, calMonth:2,
+  dark:false
+};
 
-  var desk = document.getElementById('app-desktop');
-  var mob  = document.getElementById('app-mobile');
-  injectScreens(desk);
-  injectScreens(mob);
+function injectAll(c){ var t=document.getElementById('tpl'); c.appendChild(document.importNode(t.content,true)); }
+var D=document.getElementById('app-d'), M=document.getElementById('app-m');
+injectAll(D); injectAll(M);
 
-  // go() operates on the VISIBLE container
-  function activeApp() {
-    return window.innerWidth <= 600 ? mob : desk;
-  }
+function app(){ return window.innerWidth<=600?M:D; }
 
-  window.go = function(id) {
-    var app = activeApp();
-    app.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
-    var t = app.querySelector('#' + id);
-    if (t) {
-      t.classList.add('active');
-      var sc = t.querySelector('.scroll-area');
-      if (sc) sc.scrollTop = 0;
+window.go=function(id, instant){
+  var a=app();
+  var current=a.querySelector('.screen.active');
+  var target=a.querySelector('#'+id);
+  if(!target)return;
+
+  function activate(){
+    if(current&&current!==target){
+      current.classList.remove('active');
     }
-    curScreen = id;
-    updateLinks();
-    if (id === 's-seats' && !selSeat) buildSeats();
-    if (id === 's-otp') resetOtp();
-    if (id === 's-dash') buildChart();
-    updateBagRecap();
-    updatePayTotals();
-  };
-
-  function updateLinks() {
-    document.querySelectorAll('.nav-link').forEach(function(l){ l.classList.remove('active'); });
-    var l = document.getElementById('lnk-' + curScreen);
-    if (l) l.classList.add('active');
+    target.classList.add('active');
+    var sc=target.querySelector('.scroll');if(sc)sc.scrollTop=0;
+    if(id==='s-seats'&&!state.selSeat)buildSeats();
+    if(id==='s-otp')resetOtp();
+    if(id==='s-dash')buildChart();
+    if(id==='s-results')renderTrips();
+    if(id==='s-payment')renderPayment();
+    updateLinks(id);
   }
 
-  window.doSearch = function() {
-    var cities = ['Bobo-Dioulasso','Koudougou','Ouahigouya','Banfora','Dédougou'];
-    var city = cities[Math.floor(Math.random() * cities.length)];
-    activeApp().querySelectorAll('#dest-inp').forEach(function(el){ el.innerHTML = '🏁 ' + city; });
-    activeApp().querySelectorAll('#dest-lbl').forEach(function(el){ el.textContent = city; });
-    go('s-results');
-  };
+  if(instant||!current||!current.classList.contains('active')){
+    activate();
+  } else {
+    current.classList.add('slide-back');
+    setTimeout(function(){
+      current.classList.remove('active','slide-back');
+      activate();
+    },220);
+  }
+};
 
-  window.setTab = function(idx, el) {
-    var app = activeApp();
-    app.querySelectorAll('.tabs .tab').forEach(function(t){ t.classList.remove('active'); });
-    // find sibling tabs
-    var parent = el.closest('.tabs');
-    parent.querySelectorAll('.tab').forEach(function(t,i){
-      t.classList.toggle('active', i === idx);
+function updateLinks(id){
+  document.querySelectorAll('.nav-link').forEach(function(l){l.classList.remove('active');});
+  var l=document.getElementById('lnk-'+id);
+  if(l)l.classList.add('active');
+}
+
+window.setTab=function(idx,el){
+  var s=el.closest('.screen');
+  s.querySelectorAll('.tab').forEach(function(t,i){t.classList.toggle('active',i===idx);});
+  [0,1,2].forEach(function(i){var e=s.querySelector('#tab-'+i);if(e)e.style.display=i===idx?'block':'none';});
+};
+
+/* ── CITY MODAL ── */
+var cityTarget='dest';
+window.openModal=function(type){
+  var a=app();
+  if(type==='depart'||type==='dest'){
+    cityTarget=type;
+    a.querySelectorAll('.modal-overlay#modal-city').forEach(function(m){
+      var ti=m.querySelector('#modal-city-title');
+      if(ti)ti.textContent=type==='depart'?'Choisir ville de départ':'Choisir destination';
+      var inp=m.querySelector('#city-search');
+      if(inp){inp.value='';filterCities('');}
+      m.classList.add('open');
     });
-    ['tab-billet','tab-colis','tab-suivi'].forEach(function(d, i){
-      var e = el.closest('.screen').querySelector('#' + d);
-      if (e) e.style.display = (i === idx) ? 'block' : 'none';
+  } else if(type==='date'){
+    a.querySelectorAll('.modal-overlay#modal-date').forEach(function(m){
+      buildCal();
+      m.classList.add('open');
     });
-  };
-
-  function buildSeats() {
-    var app = activeApp();
-    var lc = app.querySelector('#col-l');
-    var rc = app.querySelector('#col-r');
-    if (!lc || !rc) return;
-    lc.innerHTML = ''; rc.innerHTML = '';
-    for (var i = 1; i <= 44; i++) {
-      var s = document.createElement('div');
-      s.className = 'seat';
-      s.textContent = i;
-      if (occupied.indexOf(i) > -1) {
-        s.classList.add('occ');
-      } else if (i === selSeat) {
-        s.classList.add('sel');
-      } else if (vipS.indexOf(i) > -1) {
-        s.classList.add('vip');
-      }
-      if (occupied.indexOf(i) === -1) {
-        (function(n){ s.onclick = function(){ pickSeat(n); }; })(i);
-      }
-      ((i-1)%4 < 2 ? lc : rc).appendChild(s);
-    }
-  }
-
-  function pickSeat(n) {
-    selSeat = n;
-    buildSeats();
-    var app = activeApp();
-    var btn = app.querySelector('#seat-btn');
-    if (btn) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; }
-    app.querySelectorAll('#pay-seat').forEach(function(el){ el.textContent = n; });
-    app.querySelectorAll('#tk-seat').forEach(function(el){ el.textContent = n; });
-  }
-
-  window.selPay = function(el, code, name, color) {
-    el.closest('.scroll-area').querySelectorAll('.pay-opt').forEach(function(p){ p.classList.remove('sel'); });
-    el.classList.add('sel');
-    payOp = {code: code, name: name, color: color};
-  };
-
-  window.changeBag = function(type, delta) {
-    if (type === 's') smallBags = Math.max(0, smallBags + delta);
-    else largeBags = Math.max(0, largeBags + delta);
-    activeApp().querySelector('#cnt-s').textContent = smallBags;
-    activeApp().querySelector('#cnt-l').textContent = largeBags;
-    updateBagRecap();
-    updatePayTotals();
-  };
-
-  function updateBagRecap() {
-    var app = activeApp();
-    var r = app.querySelector('#bag-recap');
-    if (!r) return;
-    var h = '';
-    if (smallBags > 0) h += '<div class="recap-row"><span>Petit bagage ×' + smallBags + '</span><span>' + (smallBags*1000).toLocaleString() + ' FCFA</span></div>';
-    if (largeBags > 0) h += '<div class="recap-row"><span>Grand bagage ×' + largeBags + '</span><span>' + (largeBags*2500).toLocaleString() + ' FCFA</span></div>';
-    if (!h) h = '<div class="recap-row" style="color:#aaa"><span>Aucun bagage supp.</span><span>—</span></div>';
-    r.innerHTML = h;
-  }
-
-  function updatePayTotals() {
-    var total = 3500 + smallBags*1000 + largeBags*2500 + 150;
-    var app = activeApp();
-    var pt = app.querySelector('#pay-total');
-    if (pt) pt.textContent = total.toLocaleString() + ' FCFA';
-    var pb = app.querySelector('#pay-btn-total');
-    if (pb) pb.textContent = total.toLocaleString() + ' FCFA';
-    var oa = app.querySelector('#otp-amt');
-    if (oa) oa.textContent = total.toLocaleString() + ' FCFA';
-    var br = app.querySelector('#pay-bags-rows');
-    if (br) {
-      var h = '';
-      if (smallBags > 0) h += '<div class="order-row"><span>Petit bagage ×'+smallBags+'</span><span>'+(smallBags*1000).toLocaleString()+' FCFA</span></div>';
-      if (largeBags > 0) h += '<div class="order-row"><span>Grand bagage ×'+largeBags+'</span><span>'+(largeBags*2500).toLocaleString()+' FCFA</span></div>';
-      br.innerHTML = h;
-    }
-  }
-
-  function resetOtp() {
-    otpCode = [];
-    var app = activeApp();
-    var dot = app.querySelector('#op-dot');
-    var nm  = app.querySelector('#op-name');
-    var po  = app.querySelector('#proc-op');
-    if (dot) { dot.textContent = payOp.code; dot.style.background = payOp.color; }
-    if (nm) nm.textContent = payOp.name;
-    if (po) po.textContent = payOp.name;
-    for (var i = 0; i < 4; i++) {
-      var b = app.querySelector('#ob' + i);
-      if (b) { b.textContent = ''; b.className = 'otp-box' + (i === 0 ? ' cur' : ''); }
-    }
-    var form = app.querySelector('#otp-form');
-    var proc = app.querySelector('#otp-proc');
-    if (form) form.style.display = 'flex';
-    if (proc) proc.style.display = 'none';
-  }
-
-  function renderOtp() {
-    var app = activeApp();
-    for (var i = 0; i < 4; i++) {
-      var b = app.querySelector('#ob' + i);
-      if (!b) return;
-      b.className = 'otp-box';
-      if (i < otpCode.length) { b.textContent = '•'; b.classList.add('filled'); }
-      else { b.textContent = ''; if (i === otpCode.length) b.classList.add('cur'); }
-    }
-  }
-
-  window.kp = function(k) {
-    if (k === 'del') { if (otpCode.length) { otpCode.pop(); renderOtp(); } return; }
-    if (otpCode.length >= 4) return;
-    otpCode.push(k); renderOtp();
-    if (otpCode.length === 4) setTimeout(kpOk, 300);
-  };
-
-  window.kpOk = function() {
-    if (!otpCode.length) return;
-    var app = activeApp();
-    var form = app.querySelector('#otp-form');
-    var proc = app.querySelector('#otp-proc');
-    if (form) form.style.display = 'none';
-    if (proc) proc.style.display = 'flex';
-    setTimeout(function(){ go('s-success'); }, 2200);
-  };
-
-  window.simArrive = function() {
-    var app = activeApp();
-    var t3 = app.querySelector('#tl-3'); var t3t = app.querySelector('#tl-3-t');
-    if (t3) { t3.className = 'tl-dot done'; t3.textContent = '✓'; }
-    if (t3t) t3t.textContent = 'En transit ✓';
-    var t4 = app.querySelector('#tl-4'); var t4t = app.querySelector('#tl-4-t');
-    if (t4) { t4.className = 'tl-dot active'; t4.textContent = '→'; }
-    if (t4t) { t4t.style.color = ''; t4t.textContent = 'Arrivé à destination ✓'; }
-    var badge = app.querySelector('#colis-badge');
-    if (badge) { badge.textContent = 'Arrivé'; badge.className = 'track-badge done'; }
-    var na = app.querySelector('#n-arrive');
-    if (na) {
-      na.style.opacity = '1';
-      var nt = na.querySelector('.notif-title'); var ns = na.querySelector('.notif-sub'); var ntm = na.querySelector('.notif-time');
-      if (nt) nt.textContent = 'Colis arrivé à Bobo-Dioulasso !';
-      if (ns) ns.textContent = 'Fatoumata S. peut retirer le colis';
-      if (ntm) ntm.textContent = '11:28 · SMS + Push envoyés';
-    }
-    var sb = app.querySelector('#sim-btn');
-    if (sb) { sb.textContent = 'Arrivée simulée ✓'; sb.style.pointerEvents = 'none'; }
-  };
-
-  window.dTab = function(t, el) {
-    var app = activeApp();
-    app.querySelectorAll('.seg-tab').forEach(function(x){ x.classList.remove('active'); });
-    el.classList.add('active');
-    ['d-o','d-v','d-c'].forEach(function(id){ var e = app.querySelector('#'+id); if(e) e.style.display = 'none'; });
-    var map = {o:'d-o', v:'d-v', c:'d-c'};
-    var e = app.querySelector('#' + map[t]);
-    if (e) e.style.display = 'block';
-  };
-
-  function buildChart() {
-    var app = activeApp();
-    var bc = app.querySelector('#bchart');
-    if (!bc || bc.children.length) return;
-    var days = ['Jeu','Ven','Sam','Dim','Lun','Mar','Mer'];
-    var vals = [58,72,95,61,83,76,100];
-    days.forEach(function(d, i){
-      var w = document.createElement('div'); w.className = 'bw';
-      var b = document.createElement('div'); b.className = 'b' + (i===6?' today':'');
-      b.style.height = Math.round(vals[i] * 0.62) + 'px';
-      var l = document.createElement('div'); l.className = 'b-day'; l.textContent = d;
-      w.appendChild(b); w.appendChild(l); bc.appendChild(w);
+  } else if(type==='pax'){
+    a.querySelectorAll('.modal-overlay#modal-pax').forEach(function(m){
+      m.querySelectorAll('#pax-a').forEach(function(e){e.textContent=state.adults;});
+      m.querySelectorAll('#pax-e').forEach(function(e){e.textContent=state.children;});
+      m.querySelectorAll('#pax-b').forEach(function(e){e.textContent=state.babies;});
+      m.classList.add('open');
     });
   }
+};
+window.closeModal=function(t){app().querySelectorAll('.modal-overlay#modal-'+t).forEach(function(m){m.classList.remove('open');});};
 
-  // INIT
-  go('s-home');
-  buildChart();
-  updateBagRecap();
-  updatePayTotals();
+window.filterCities=function(v){
+  var a=app();
+  var filtered=v?CITIES.filter(function(c){return c.name.toLowerCase().includes(v.toLowerCase());}):CITIES;
+  a.querySelectorAll('#city-list').forEach(function(list){
+    list.innerHTML=filtered.map(function(c){
+      return '<div class="city-item" onclick="pickCity(\''+c.name+'\')">'
+        +'<div><div class="city-name">'+c.name+'</div><div class="city-region">'+c.region+'</div></div>'
+        +'<div class="city-km">'+c.km+'</div></div>';
+    }).join('');
+  });
+};
+filterCities('');
+
+window.pickCity=function(name){
+  if(cityTarget==='dest'){
+    state.dest=name;
+    app().querySelectorAll('#fld-dest-txt').forEach(function(e){e.className='val';e.textContent=name;});
+    app().querySelectorAll('#dest-lbl').forEach(function(e){e.textContent=name;});
+  } else {
+    state.depart=name;
+    app().querySelectorAll('#fld-depart').forEach(function(e){e.textContent=name;});
+  }
+  closeModal('city');
+};
+
+window.swapCities=function(){
+  var tmp=state.depart; state.depart=state.dest; state.dest=tmp;
+  app().querySelectorAll('#fld-depart').forEach(function(e){e.textContent=state.depart;});
+  app().querySelectorAll('#fld-dest-txt').forEach(function(e){
+    if(state.dest===state.depart){e.className='ph';e.textContent='Choisir';}
+    else{e.className='val';e.textContent=state.dest;}
+  });
+};
+
+/* ── CALENDAR ── */
+var MONTHS=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+var DAYS=['Lu','Ma','Me','Je','Ve','Sa','Di'];
+window.changeMonth=function(d){state.calMonth=(state.calMonth+d+12)%12;if(d>0&&state.calMonth===0)state.calYear++;if(d<0&&state.calMonth===11)state.calYear--;buildCal();};
+
+function buildCal(){
+  var a=app();
+  a.querySelectorAll('#cal-month').forEach(function(e){e.textContent=MONTHS[state.calMonth]+' '+state.calYear;});
+  var y=state.calYear,m=state.calMonth;
+  var first=new Date(y,m,1).getDay(); first=(first+6)%7;
+  var days=new Date(y,m+1,0).getDate();
+  a.querySelectorAll('#cal-grid').forEach(function(grid){
+    grid.innerHTML='';
+    for(var i=0;i<first;i++){var e=document.createElement('div');e.className='date-cell past';grid.appendChild(e);}
+    for(var d=1;d<=days;d++){
+      var cell=document.createElement('div');cell.className='date-cell';
+      var dn=document.createElement('div');dn.className='date-num';dn.textContent=d;
+      cell.appendChild(dn);
+      var lbl=state.dateLabel;
+      if(lbl===d+' '+MONTHS[m].toLowerCase().slice(0,4))cell.classList.add('sel');
+      (function(day){cell.onclick=function(){pickDate(y,m,day);};})(d);
+      grid.appendChild(cell);
+    }
+  });
+}
+
+function pickDate(y,m,d){
+  state.calYear=y;state.calMonth=m;
+  var mName=MONTHS[m];
+  state.dateLabel=d+' '+mName.toLowerCase().slice(0,4);
+  state.dateFull=y+'-'+(m+1<10?'0'+(m+1):(m+1))+'-'+(d<10?'0'+d:d);
+  app().querySelectorAll('#fld-date').forEach(function(e){e.textContent=state.dateLabel;});
+  closeModal('date');
+}
+
+/* ── PASSENGERS ── */
+window.changePax=function(t,d){
+  if(t==='a')state.adults=Math.max(1,state.adults+d);
+  else if(t==='e')state.children=Math.max(0,state.children+d);
+  else state.babies=Math.max(0,state.babies+d);
+  app().querySelectorAll('#pax-a').forEach(function(e){e.textContent=state.adults;});
+  app().querySelectorAll('#pax-e').forEach(function(e){e.textContent=state.children;});
+  app().querySelectorAll('#pax-b').forEach(function(e){e.textContent=state.babies;});
+};
+window.confirmPax=function(){
+  var total=state.adults+state.children;
+  var lbl=state.adults+' adulte'+(state.adults>1?'s':'');
+  if(state.children)lbl+=', '+state.children+' enfant'+(state.children>1?'s':'');
+  if(state.babies)lbl+=', '+state.babies+' bébé'+(state.babies>1?'s':'');
+  app().querySelectorAll('#fld-pax').forEach(function(e){e.textContent=lbl;});
+  app().querySelectorAll('#r-pax').forEach(function(e){e.textContent=total+' passager'+(total>1?'s':'');});
+  closeModal('pax');
+};
+
+/* ── SEARCH ── */
+window.doSearch=function(){
+  if(!state.dest||state.dest===state.depart){openModal('dest');return;}
+  go('s-results');
+};
+
+/* ── RESULTS ── */
+window.filterResults=function(f,el){
+  state.activeFilter=f;
+  app().querySelectorAll('.pill').forEach(function(p){p.classList.remove('active');});
+  el.classList.add('active');
+  renderTrips();
+};
+
+function renderTrips(){
+  var a=app();
+  var f=state.activeFilter;
+  var list=TRIPS.filter(function(t){
+    if(f==='morning')return t.morning;
+    if(f==='afternoon')return !t.morning;
+    if(f==='vip')return t.vip;
+    if(f==='clim')return t.tags.indexOf('Climatisé')>-1;
+    if(f==='cheap')return t.price<=3200;
+    return true;
+  });
+  if(f==='cheap')list.sort(function(a,b){return a.price-b.price;});
+  a.querySelectorAll('#results-list').forEach(function(rl){
+    if(!list.length){rl.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)">Aucun résultat pour ce filtre</div>';return;}
+    rl.innerHTML=list.map(function(t,i){
+      var isFirst=i===0&&f==='all';
+      return '<div class="card tappable'+(isFirst?' featured':'')+'" onclick="pickTrip('+i+')">'
+        +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">'
+        +'<div><div class="company-name">'+t.company+'</div><span class="badge '+(t.vip?'badge-amber':'badge-green')+'">'+t.class+'</span></div>'
+        +'<div style="text-align:right"><div class="big-price">'+t.price.toLocaleString()+'</div><div class="price-unit">FCFA / pers.</div></div></div>'
+        +'<div class="route-row"><div><div class="big-time">'+t.dep+'</div><div class="city-lbl">'+state.depart+'</div></div>'
+        +'<div class="dur">🚌<br>'+t.dur+'</div>'
+        +'<div style="text-align:right"><div class="big-time">'+t.arr+'</div><div class="city-lbl">'+state.dest+'</div></div></div>'
+        +'<div class="tag-row"><span class="tag">'+t.seats+' places</span>'
+        +t.tags.map(function(tg){return '<span class="tag green">'+tg+'</span>';}).join('')+'</div></div>';
+    }).join('');
+  });
+}
+
+window.pickTrip=function(i){
+  state.selTrip=TRIPS[i]||TRIPS[0];
+  app().querySelectorAll('#seat-trip-label').forEach(function(e){e.textContent=state.selTrip.company+' · '+state.depart.slice(0,5)+' → '+state.dest.slice(0,4);});
+  app().querySelectorAll('#seat-price').forEach(function(e){e.textContent=state.selTrip.price.toLocaleString()+' FCFA';});
+  go('s-seats');
+};
+
+/* ── SEATS ── */
+var occupied=[3,5,8,13,18,23,28,33,38,43],vipS=[1,4];
+function buildSeats(){
+  var a=app();
+  var lc=a.querySelector('#col-l'),rc=a.querySelector('#col-r');
+  if(!lc||!rc)return;
+  lc.innerHTML='';rc.innerHTML='';
+  for(var i=1;i<=44;i++){
+    var s=document.createElement('div');s.className='seat';s.textContent=i;
+    if(occupied.indexOf(i)>-1)s.classList.add('occ');
+    else if(i===state.selSeat)s.classList.add('sel');
+    else if(vipS.indexOf(i)>-1)s.classList.add('vip');
+    if(occupied.indexOf(i)===-1)(function(n){s.onclick=function(){pickSeat(n);};})(i);
+    ((i-1)%4<2?lc:rc).appendChild(s);
+  }
+}
+function pickSeat(n){
+  state.selSeat=n;buildSeats();
+  var a=app();
+  var btn=a.querySelector('#seat-btn');if(btn){btn.style.opacity='1';btn.style.pointerEvents='auto';}
+  var hint=a.querySelector('#seat-hint');if(hint)hint.style.display='none';
+  a.querySelectorAll('#pay-seat').forEach(function(e){e.textContent=n;});
+  a.querySelectorAll('#tk-seat').forEach(function(e){e.textContent=n;});
+}
+
+/* ── BAGGAGE ── */
+window.chgBag=function(t,d){
+  if(t==='s')state.smallBags=Math.max(0,state.smallBags+d);
+  else state.largeBags=Math.max(0,state.largeBags+d);
+  app().querySelectorAll('#cnt-s').forEach(function(e){e.textContent=state.smallBags;});
+  app().querySelectorAll('#cnt-l').forEach(function(e){e.textContent=state.largeBags;});
+  updateBagRecap();updatePayTotal();
+};
+function updateBagRecap(){
+  var a=app(),h='';
+  if(state.smallBags)h+='<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:4px"><span>Petit bagage ×'+state.smallBags+'</span><span>'+(state.smallBags*1000).toLocaleString()+' FCFA</span></div>';
+  if(state.largeBags)h+='<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:4px"><span>Grand bagage ×'+state.largeBags+'</span><span>'+(state.largeBags*2500).toLocaleString()+' FCFA</span></div>';
+  if(!h)h='<div style="font-size:12px;color:var(--text3);font-style:italic">Aucun bagage supplémentaire</div>';
+  a.querySelectorAll('#bag-recap').forEach(function(e){e.innerHTML=h;});
+}
+function total(){return state.selTrip.price*state.adults+state.smallBags*1000+state.largeBags*2500+150;}
+function updatePayTotal(){
+  var t=total();
+  app().querySelectorAll('#pay-total,#pay-btn-amt,#otp-amt').forEach(function(e){e.textContent=t.toLocaleString()+' FCFA';});
+}
+function renderPayment(){
+  var a=app();
+  var t=state.selTrip;
+  var billetAmt=t.price*state.adults;
+  a.querySelectorAll('#pay-billet-amt').forEach(function(e){e.textContent=billetAmt.toLocaleString()+' FCFA';});
+  a.querySelectorAll('#pay-pax-n').forEach(function(e){e.textContent=state.adults;});
+  a.querySelectorAll('#pay-date').forEach(function(e){e.textContent=state.dateLabel;});
+  var h='';
+  if(state.smallBags)h+='<div class="order-row"><span>Petit bagage ×'+state.smallBags+'</span><span>'+(state.smallBags*1000).toLocaleString()+' FCFA</span></div>';
+  if(state.largeBags)h+='<div class="order-row"><span>Grand bagage ×'+state.largeBags+'</span><span>'+(state.largeBags*2500).toLocaleString()+' FCFA</span></div>';
+  a.querySelectorAll('#pay-bags-rows').forEach(function(e){e.innerHTML=h;});
+  updatePayTotal();
+}
+
+/* ── PAYMENT ── */
+window.selPay=function(el,code,name,color){
+  el.closest('.scroll').querySelectorAll('.pay-opt').forEach(function(p){p.classList.remove('sel');});
+  el.classList.add('sel');
+  state.payOp={code:code,name:name,color:color};
+};
+
+/* ── OTP ── */
+function resetOtp(){
+  state.otpCode=[];
+  var a=app();
+  a.querySelectorAll('#op-dot').forEach(function(e){e.textContent=state.payOp.code;e.style.background=state.payOp.color;});
+  a.querySelectorAll('#op-name').forEach(function(e){e.textContent=state.payOp.name;});
+  a.querySelectorAll('#proc-op').forEach(function(e){e.textContent=state.payOp.name;});
+  for(var i=0;i<4;i++){a.querySelectorAll('#ob'+i).forEach(function(e){e.textContent='';e.className='otp-box'+(i===0?' cur':'');});}
+  a.querySelectorAll('#otp-form').forEach(function(e){e.style.display='flex';});
+  a.querySelectorAll('#otp-proc').forEach(function(e){e.style.display='none';});
+  updatePayTotal();
+}
+function renderOtp(){
+  var a=app();
+  for(var i=0;i<4;i++){
+    a.querySelectorAll('#ob'+i).forEach(function(e){
+      e.className='otp-box';
+      if(i<state.otpCode.length){e.textContent='•';e.classList.add('filled');}
+      else{e.textContent='';if(i===state.otpCode.length)e.classList.add('cur');}
+    });
+  }
+}
+window.kp=function(k){
+  if(k==='del'){if(state.otpCode.length){state.otpCode.pop();renderOtp();}return;}
+  if(state.otpCode.length>=4)return;
+  state.otpCode.push(k);renderOtp();
+  if(state.otpCode.length===4)setTimeout(kpOk,300);
+};
+window.kpOk=function(){
+  if(!state.otpCode.length)return;
+  var a=app();
+  a.querySelectorAll('#otp-form').forEach(function(e){e.style.display='none';});
+  a.querySelectorAll('#otp-proc').forEach(function(e){e.style.display='flex';});
+  setTimeout(function(){
+    go('s-success');
+    setTimeout(function(){showPush('✅','Paiement confirmé !','Billet MB-2026-00847 émis');},800);
+  },2200);
+};
+
+/* ── COLIS ── */
+window.simArrive=function(){
+  var a=app();
+  a.querySelectorAll('#tl3').forEach(function(e){e.className='tl-dot done';e.textContent='✓';});
+  a.querySelectorAll('#tl3t').forEach(function(e){e.textContent='En transit ✓';});
+  a.querySelectorAll('#tl4').forEach(function(e){e.className='tl-dot active';e.textContent='→';});
+  a.querySelectorAll('#tl4t').forEach(function(e){e.style.color='';e.textContent='Arrivé à destination ✓';});
+  a.querySelectorAll('#colis-badge').forEach(function(e){e.textContent='Arrivé';e.className='track-badge done';});
+  a.querySelectorAll('#n-arrive').forEach(function(el){
+    el.style.opacity='1';
+    var nt=el.querySelector('.notif-title'),ns=el.querySelector('.notif-sub'),ntm=el.querySelector('.notif-time');
+    if(nt)nt.textContent='Colis arrivé à Bobo-Dioulasso !';
+    if(ns)ns.textContent='Fatoumata S. peut retirer le colis';
+    if(ntm)ntm.textContent='11:28 · SMS + Push envoyés';
+  });
+  a.querySelectorAll('#sim-btn').forEach(function(e){e.textContent='Arrivée simulée ✓';e.style.pointerEvents='none';});
+  showPush('📦','Colis arrivé !','Fatoumata peut retirer TSR-2026-00234');
+};
+
+/* ── DASHBOARD ── */
+window.dTab=function(t,el){
+  var a=app();
+  a.querySelectorAll('.seg-tab').forEach(function(x){x.classList.remove('active');});
+  el.classList.add('active');
+  ['d-o','d-v','d-c'].forEach(function(id){a.querySelectorAll('#'+id).forEach(function(e){e.style.display='none';});});
+  a.querySelectorAll('#d-'+t).forEach(function(e){e.style.display='block';});
+};
+function buildChart(){
+  var a=app();
+  a.querySelectorAll('#bchart').forEach(function(bc){
+    if(bc.children.length)return;
+    var days=['Jeu','Ven','Sam','Dim','Lun','Mar','Mer'],vals=[58,72,95,61,83,76,100];
+    days.forEach(function(d,i){
+      var w=document.createElement('div');w.className='bw';
+      var b=document.createElement('div');b.className='b'+(i===6?' today':'');b.style.height=Math.round(vals[i]*.66)+'px';
+      var l=document.createElement('div');l.className='b-day';l.textContent=d;
+      w.appendChild(b);w.appendChild(l);bc.appendChild(w);
+    });
+  });
+}
+
+/* ── PUSH NOTIFICATION ── */
+var pushTimer=null;
+window.showPush=function(icon,title,sub){
+  var a=app();
+  a.querySelectorAll('#push-notif').forEach(function(p){
+    p.querySelector('#push-icon').textContent=icon;
+    p.querySelector('#push-title').textContent=title;
+    p.querySelector('#push-sub').textContent=sub;
+    p.classList.add('show');
+    if(pushTimer)clearTimeout(pushTimer);
+    pushTimer=setTimeout(function(){p.classList.remove('show');},4000);
+    p.onclick=function(){p.classList.remove('show');};
+  });
+};
+
+/* ── DARK MODE ── */
+window.toggleDark=function(){
+  state.dark=!state.dark;
+  document.documentElement.setAttribute('data-theme',state.dark?'dark':'light');
+  var trk=document.getElementById('toggle-track');
+  if(trk)trk.classList.toggle('on',state.dark);
+  document.querySelectorAll('.toggle-track').forEach(function(t){t.classList.toggle('on',state.dark);});
+};
+
+/* ── INIT ── */
+[D,M].forEach(function(c){c.querySelectorAll('.screen.active').forEach(function(s){s.classList.remove('active');});});
+go('s-home',true);
+updateBagRecap();
+renderTrips();
+buildChart();
+window.addEventListener('resize',function(){if(!app().querySelector('.screen.active'))go('s-home',true);});
 
 })();
 </script>
